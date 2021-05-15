@@ -2,17 +2,26 @@ package it.polimi.tiw.progetto.beans;
 
 public class Utente {
 
-	private String e_mail;
+	private int id;
+	private String email;
 	private String nome;
 	private String cognome;
 	private String indirizzo; //TODO: come string?
 	
-	public String getE_mail() {
-		return e_mail;
+	public int getId() {
+		return id;
 	}
 	
-	public void setE_mail(String e_mail) {
-		this.e_mail = e_mail;
+	public void setId(int id) {
+		this.id= id;
+	}
+	
+	public String getEmail() {
+		return email;
+	}
+	
+	public void setEmail(String email) {
+		this.email = email;
 	}
 	
 	public String getNome() {
