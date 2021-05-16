@@ -11,12 +11,24 @@
   </context-param>
   <context-param>
     <param-name>dbPassword</param-name>
-    <param-value>Stefano.99</param-value>
+    <param-value>Progetto.2021</param-value>
   </context-param>
   <context-param>
     <param-name>dbDriver</param-name>
     <param-value>com.mysql.cj.jdbc.Driver</param-value>
   </context-param>
+ <filter> 
+      <filter-name>ControlloAccesso</filter-name>
+      <filter-class>it.polimi.tiw.progetto.filters.ControlloAccesso</filter-class> 
+ </filter> 
+ <filter-mapping> 
+    <filter-name>ControlloAccesso</filter-name> 
+    <url-pattern>/GoToHome</url-pattern> 
+    <url-pattern>/GoToCarrello</url-pattern> 
+    <url-pattern>/GoToOrdine</url-pattern> 
+    <url-pattern>/GoToRisultati</url-pattern> 
+    <url-pattern>/Logout</url-pattern> 
+ </filter-mapping>
   <welcome-file-list>
     <welcome-file>login.html</welcome-file>
   </welcome-file-list>

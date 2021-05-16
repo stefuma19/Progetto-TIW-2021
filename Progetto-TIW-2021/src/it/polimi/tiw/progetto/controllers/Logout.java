@@ -1,5 +1,5 @@
 package it.polimi.tiw.progetto.controllers;
 
-public class VaiAOrdine {
+public class Logout {
 
 }
