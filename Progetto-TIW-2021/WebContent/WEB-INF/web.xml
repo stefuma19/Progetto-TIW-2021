@@ -17,6 +17,10 @@
     <param-name>dbDriver</param-name>
     <param-value>com.mysql.cj.jdbc.Driver</param-value>
   </context-param>
+  <context-param>
+    <param-name>outputpath</param-name>
+    <param-value>\TIWIMGS\</param-value>
+  </context-param>
  <filter> 
       <filter-name>ControlloAccesso</filter-name>
       <filter-class>it.polimi.tiw.progetto.filters.ControlloAccesso</filter-class> 

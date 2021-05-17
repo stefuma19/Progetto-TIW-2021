@@ -41,7 +41,6 @@ public class ControllaLogin extends HttpServlet{
 		this.templateEngine = new TemplateEngine();
 		this.templateEngine.setTemplateResolver(templateResolver);
 		templateResolver.setSuffix(".html");
-
 	}
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)  //TODO: serve o lo togliamo?

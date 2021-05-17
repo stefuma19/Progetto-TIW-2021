@@ -12,7 +12,7 @@
 		&emsp;<a th:href="@{/Logout}">Logout</a>
 	</div>
 	<div class="barraMenu">
-		<table>
+		<table style="margin-left: auto; margin-right: auto;">
 			<tr>
 				<td><a th:href="@{/GoToHome}">Home</a></td>
 				<td><a th:href="@{/GoToCarrello}">Carrello</a></td>
@@ -28,10 +28,21 @@
 		</table>	
 	</div>
 	<div class="prodottiRecenti">
-		Prodotti recenti : Ancora da implementare
+		<table class="tabellaCentrata">
+		<tr>
+			<td style="text-align: center;" th:each="p : ${prodotti}">
+				<a th:href="@{/GoToRisultati(idProdotto=${p.ID})}">
+					<span th:text="${p.ID}">Codice</span> - <span th:text="${p.nome}">Nome prodotto</span>
+				</a>
+			</td>
+		</tr>
+		<tr>
+			<td style="text-align: center;" th:each="p : ${prodotti}" th:text="${p.immagine}">Immagine</td>
+		</tr>
+		</table>		
 	</div>
 	<div class="elencoProdotti">
-		ELENCO PRODOTTI DA IMPLEMENTARE
+		ELENCO PRODOTTI DA IMPLEMENTARE?
 	</div>
 </body>
 </html>

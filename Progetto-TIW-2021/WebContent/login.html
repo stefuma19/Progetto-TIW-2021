@@ -4,22 +4,22 @@
 	<meta charset="ISO-8859-1">
 	<title>Login</title>
 	<link rel="stylesheet" type="text/css" media="all"
-		href="../css/mystyle.css" th:href="@{/css/mystyle.css}" />
+		href="css/mystyle.css" th:href="@{/css/mystyle.css}" />
 </head>
 <body>
-	<h1>Welcome to the new e-commerce application</h1>
+	<h2 align="center">Welcome to the new e-commerce application</h2>
 	<form action="ControllaLogin" method="POST">
-		<table>
+		<table class="tabellaCentrata">
 			<tr>
 				<td>Email </td><td><input type="text" name="email" required></td>
 			</tr>
 			<tr>
 				<td>Password </td><td><input type="password" name="psw" required></td>
 			</tr>
-			<tr>
+			<tr>			
 				<td><input type="submit" value="Login"></td>
 				<td th:text=" ${errorMsg}"/>
-			</tr>
+			</tr>		
 		</table><br>
 	</form>
 </body>
