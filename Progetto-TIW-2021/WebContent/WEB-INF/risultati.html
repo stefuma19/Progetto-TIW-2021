@@ -1,10 +1,37 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="ISO-8859-1">
-<title>Insert title here</title>
+	<meta charset="ISO-8859-1">
+	<title>Risultati</title>
+	<link rel="stylesheet" type="text/css" media="all"
+		href="../css/mystyle.css" th:href="@{/css/mystyle.css}" />
 </head>
 <body>
-
+	<div class="logUtente">
+		Benvenut* <span th:text="${session.utente.nome}">utente</span>
+		&emsp;<a th:href="@{/Logout}">Logout</a>
+	</div>
+	<div class="barraMenu">
+		<table>
+			<tr>
+				<td><a th:href="@{/GoToHome}">Home</a></td>
+				<td><a th:href="@{/GoToCarrello}">Carrello</a></td>
+				<td><a th:href="@{/GoToOrdini}">Ordini</a></td>
+				<td>
+					<form action="GoToRisultati" th:href="@{/GoToRisultati}" method="POST"> <!-- SI FA COSI'? -->
+						Inserisci una parola chiave per la ricerca nel catalogo: 
+						<input type="text" name="keyword">
+						<input type="submit" value="Cerca">
+					</form>
+				</td>
+			</tr>
+		</table>	
+	</div>
+	<div class="prodottiRecenti">
+		Prodotti recenti : Ancora da implementare
+	</div>
+	<div class="prodottiRisultati">
+		PRODOTTI RISULTATI DA IMPLEMENTARE
+	</div>
 </body>
 </html>

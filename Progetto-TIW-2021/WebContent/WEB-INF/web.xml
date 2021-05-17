@@ -25,7 +25,7 @@
     <filter-name>ControlloAccesso</filter-name> 
     <url-pattern>/GoToHome</url-pattern> 
     <url-pattern>/GoToCarrello</url-pattern> 
-    <url-pattern>/GoToOrdine</url-pattern> 
+    <url-pattern>/GoToOrdini</url-pattern> 
     <url-pattern>/GoToRisultati</url-pattern> 
     <url-pattern>/Logout</url-pattern> 
  </filter-mapping>

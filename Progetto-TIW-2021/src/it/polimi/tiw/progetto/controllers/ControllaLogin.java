@@ -13,34 +13,35 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.WebContext;
+import org.thymeleaf.templatemode.TemplateMode;
+import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
+
 import it.polimi.tiw.progetto.beans.Utente;
 import it.polimi.tiw.progetto.dao.UtenteDAO;
+import it.polimi.tiw.progetto.utils.GestoreConnessione;
 
 @WebServlet("/ControllaLogin")
 public class ControllaLogin extends HttpServlet{
 	
 	private static final long serialVersionUID = 1L;
 	private Connection connection = null;
+	private TemplateEngine templateEngine;
 	
 	public ControllaLogin() {
 		super();
 	}
 	
 	public void init() throws ServletException {
-		try {
-			ServletContext context = getServletContext();
-			String driver = context.getInitParameter("dbDriver");
-			String url = context.getInitParameter("dbUrl");
-			String user = context.getInitParameter("dbUser");
-			String password = context.getInitParameter("dbPassword");
-			Class.forName(driver);
-			connection = DriverManager.getConnection(url, user, password);
+		connection = GestoreConnessione.getConnection(getServletContext());
+		ServletContext servletContext = getServletContext();
+		ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(servletContext);
+		templateResolver.setTemplateMode(TemplateMode.HTML);
+		this.templateEngine = new TemplateEngine();
+		this.templateEngine.setTemplateResolver(templateResolver);
+		templateResolver.setSuffix(".html");
 
-		} catch (ClassNotFoundException e) {
-			throw new UnavailableException("Can't load database driver");
-		} catch (SQLException e) {
-			throw new UnavailableException("Couldn't get db connection");
-		}
 	}
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)  //TODO: serve o lo togliamo?
@@ -50,23 +51,48 @@ public class ControllaLogin extends HttpServlet{
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		String email = request.getParameter("email");
-		String psw = request.getParameter("psw");
-		UtenteDAO usr = new UtenteDAO(connection);
-		Utente u = null;
+		String email = null;
+		String psw = null;
 		try {
-			u = usr.controllaCredenziali(email, psw);
+			email = request.getParameter("email");
+			psw = request.getParameter("psw");
+			if (email == null || psw == null || email.isEmpty() || psw.isEmpty()) {
+				throw new Exception("Credenziali mancanti o inesistenti");
+			}
+		} catch (Exception e) {
+			// for debugging only e.printStackTrace();
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Credenziali non presenti");
+			return;
+		}
+		
+		UtenteDAO usrDao = new UtenteDAO(connection);
+		Utente usr = null;
+		try {
+			usr = usrDao.controllaCredenziali(email, psw);
 		} catch (SQLException e) {
-			// throw new ServletException(e);
-			response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in database credential checking");
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile controllare le credenziali");
+			return;
 		}
-		String path = getServletContext().getContextPath();
-		if (u == null) {
-			path = getServletContext().getContextPath() + "/login.html";
+		
+		String path;
+		if (usr == null) {
+			ServletContext servletContext = getServletContext();
+			final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
+			ctx.setVariable("errorMsg", "Email o password errata");
+			path = "/login.html";
+			templateEngine.process(path, ctx, response.getWriter());
 		} else {
-			request.getSession().setAttribute("user", u);
+			request.getSession().setAttribute("utente", usr);
 			path = getServletContext().getContextPath() + "/GoToHome";
+			response.sendRedirect(path);
 		}
-		response.sendRedirect(path);
+	}
+	
+	public void destroy() {
+		try {
+			GestoreConnessione.closeConnection(connection);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }

@@ -31,7 +31,7 @@ public class ControlloAccesso implements Filter{
 		String loginpath = req.getServletContext().getContextPath() + "/login.html";
 
 		HttpSession s = req.getSession();
-		if (s.isNew() || s.getAttribute("user") == null) {
+		if (s.isNew() || s.getAttribute("utente") == null) {
 			res.sendRedirect(loginpath);
 			return;
 		}

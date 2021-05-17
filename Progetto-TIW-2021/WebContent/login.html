@@ -1,15 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="ISO-8859-1">
-<title>Login page</title>
+	<meta charset="ISO-8859-1">
+	<title>Login</title>
+	<link rel="stylesheet" type="text/css" media="all"
+		href="../css/mystyle.css" th:href="@{/css/mystyle.css}" />
 </head>
 <body>
 	<h1>Welcome to the new e-commerce application</h1>
 	<form action="ControllaLogin" method="POST">
-		email: <input type="text" name="email"> <br>
-		password: <input type="password" name="psw"><br> 
-		<input type="submit" value="login">
+		<table>
+			<tr>
+				<td>Email </td><td><input type="text" name="email" required></td>
+			</tr>
+			<tr>
+				<td>Password </td><td><input type="password" name="psw" required></td>
+			</tr>
+			<tr>
+				<td><input type="submit" value="Login"></td>
+				<td th:text=" ${errorMsg}"/>
+			</tr>
+		</table><br>
 	</form>
 </body>
 </html>
