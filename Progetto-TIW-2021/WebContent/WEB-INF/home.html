@@ -37,7 +37,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td style="text-align: center;" th:each="p : ${prodotti}" th:text="${p.immagine}">Immagine</td>
+			<td style="text-align: center;" th:each="p : ${prodotti}"> <img src="${p.immagine}" alt="" border=3 height=100 width=100></td>
 		</tr>
 		</table>		
 	</div>

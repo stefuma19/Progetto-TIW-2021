@@ -29,12 +29,15 @@ public class GoToHome extends HttpServlet{
 	private static final long serialVersionUID = 1L;
 	private Connection connection = null;
 	private TemplateEngine templateEngine;
+	
+	String folderPath = "";
 
 	public GoToHome() {
 		super();
 	}
 
 	public void init() throws ServletException {
+		folderPath = getServletContext().getInitParameter("outputpath");
 		connection = GestoreConnessione.getConnection(getServletContext());
 		ServletContext servletContext = getServletContext();
 		ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(servletContext);
@@ -58,8 +61,11 @@ public class GoToHome extends HttpServlet{
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile recuperare prodotti");
 			return;
 		}
-		
+		for(Prodotto p : prodotti) {
+			p.setImmagine(folderPath + p.getImmagine());
+		}
 		String path = "/WEB-INF/home.html";
+		response.setContentType("text");
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
 		ctx.setVariable("prodotti", prodotti);
