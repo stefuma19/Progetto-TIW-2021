@@ -6,7 +6,7 @@ public class Prodotto {
 	private String nome;
 	private String descrizione;
 	private String categoria;
-	private String immagine; //TODO: va bene il tipo String?
+	private String immagine;
 	
 	
 	public int getID() {

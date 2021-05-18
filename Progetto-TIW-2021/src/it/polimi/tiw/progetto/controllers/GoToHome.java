@@ -61,9 +61,6 @@ public class GoToHome extends HttpServlet{
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile recuperare prodotti");
 			return;
 		}
-		for(Prodotto p : prodotti) {
-			p.setImmagine(folderPath + p.getImmagine());
-		}
 		String path = "/WEB-INF/home.html";
 		response.setContentType("text");
 		ServletContext servletContext = getServletContext();
