@@ -11,8 +11,9 @@
 		Benvenut* <span th:text="${session.utente.nome}">utente</span>
 		&emsp;<a th:href="@{/Logout}">Logout</a>
 	</div>
-	<div class="barraMenu">
-		<table style="margin-left: auto; margin-right: auto;">
+	<div class = "barraMenu">
+	<!-- style="position: absolute; left: 0; right: 0;" -->
+		<table>
 			<tr>
 				<td><a th:href="@{/GoToHome}">Home</a></td>
 				<td><a th:href="@{/GoToCarrello}">Carrello</a></td>
@@ -25,20 +26,18 @@
 					</form>
 				</td>
 			</tr>
-		</table>	
+		</table>
 	</div>
 	<div class="prodottiRecenti">
 		<table class="tabellaCentrata">
-		<tr>
-			<td style="text-align: center;" th:each="p : ${prodotti}">
+		<tr  th:each="p : ${prodotti}">
+			<td style="text-align: center;">
 				<a th:href="@{/GoToRisultati(idProdotto=${p.ID})}">
 					<span th:text="${p.ID}">Codice</span> - <span th:text="${p.nome}">Nome prodotto</span>
 				</a>
-			</td>
-		</tr>
-		<tr> 
-			<td style="text-align: center;" th:each="p : ${prodotti}">
-			<img th:src="@{'data:image/jpg;base64,'+${p.immagine}}" th:alt="${p.nome}" border=3 height=100 width=100/>
+			</td> 
+			<td style="text-align: center;">
+			<img th:src="@{'data:image/jpg;base64,'+${p.immagine}}" th:alt="${p.nome}" width="150" height="150" />
 			</td>
 		</tr>
 		</table>		
