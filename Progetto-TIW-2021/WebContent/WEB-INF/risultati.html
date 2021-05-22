@@ -9,14 +9,14 @@
 <body>
 	<div class="logUtente">
 		Benvenut* <span th:text="${session.utente.nome}">utente</span>
-		&emsp;<a th:href="@{/Logout}">Logout</a>
+		&emsp;<a href="Logout">Logout</a>
 	</div>
 	<div class="barraMenu">
 		<table>
 			<tr>
-				<td><a th:href="@{/GoToHome}">Home</a></td>
-				<td><a th:href="@{/GoToCarrello}">Carrello</a></td>
-				<td><a th:href="@{/GoToOrdini}">Ordini</a></td>
+				<td><a href="GoToHome">Home</a></td>
+				<td><a href="GoToCarrello">Carrello</a></td>
+				<td><a href="GoToOrdini">Ordini</a></td>
 				<td>
 					<form action="GoToRisultati" method="POST"> <!-- SI FA COSI'? -->
 						Inserisci una parola chiave per la ricerca nel catalogo: 
@@ -43,7 +43,8 @@
 					<span th:text="${p.descrizione}">Descrizione</span>
 				</td> 
 			</tr>
-		</table>		
+		</table>
+		<span th:if="${prodotti.empty}">La ricerca non ha prodotto risultati</span>		
 	</div>
 </body>
 </html>

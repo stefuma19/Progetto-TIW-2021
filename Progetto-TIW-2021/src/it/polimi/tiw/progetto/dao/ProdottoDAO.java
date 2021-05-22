@@ -51,14 +51,15 @@ public class ProdottoDAO {
 	
 	public List<Prodotto> prendiProdottiCercati(String parolaChiave) throws SQLException{
 		List<Prodotto> prodotti = new ArrayList<Prodotto>();
+		String parametro = "%"+parolaChiave+"%";
 		//TODO: query da cambiare? 
 		String query = "select * from prodotto p join vendita v1 on p.Id=v1.IdProdotto "
-				+ "where (Nome LIKE %?% or Descrizione LIKE %?%) and Prezzo =	(select min(Prezzo) from vendita v2	where v2.IdProdotto = v1.IdProdotto) "
+				+ "where (Nome LIKE ? or Descrizione LIKE ?) and Prezzo =	(select min(Prezzo) from vendita v2	where v2.IdProdotto = v1.IdProdotto) "
 				+ "order by Prezzo"; 
 		
 		try (PreparedStatement pstatement = connection.prepareStatement(query);) {
-			pstatement.setString(1, parolaChiave);
-			pstatement.setString(2, parolaChiave);
+			pstatement.setString(1, parametro);
+			pstatement.setString(2, parametro);
 			try (ResultSet result = pstatement.executeQuery();) {
 				while (result.next()) {
 					Prodotto prodotto = new Prodotto();
