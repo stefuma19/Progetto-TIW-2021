@@ -1,6 +1,10 @@
 package it.polimi.tiw.progetto.controllers;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -14,16 +18,22 @@ import org.thymeleaf.context.WebContext;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
+import it.polimi.tiw.progetto.beans.Prodotto;
+import it.polimi.tiw.progetto.dao.ProdottoDAO;
+import it.polimi.tiw.progetto.utils.GestoreConnessione;
+
 @WebServlet("/GoToRisultati")
 public class GoToRisultati extends HttpServlet{
 	private static final long serialVersionUID = 1L;
 	private TemplateEngine templateEngine;
-
+	private Connection connection = null;
+	
 	public GoToRisultati() {
 		super();
 	}
 
 	public void init() throws ServletException {
+		connection = GestoreConnessione.getConnection(getServletContext());
 		ServletContext servletContext = getServletContext();
 		ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(servletContext);
 		templateResolver.setTemplateMode(TemplateMode.HTML);
@@ -35,10 +45,23 @@ public class GoToRisultati extends HttpServlet{
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
-		String path = "/WEB-INF/risultati.html";
-		ServletContext servletContext = getServletContext();
-		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-		templateEngine.process(path, ctx, response.getWriter());
+		//HttpSession session = request.getSession();
+				//Utente usr = (Utente) session.getAttribute("utente");
+				ProdottoDAO prodottoDAO = new ProdottoDAO(connection);
+				List<Prodotto> prodotti = new ArrayList<Prodotto>();
+				
+				try {
+					prodotti = prodottoDAO.prendiProdottiCercati(request.getParameter("keyword"));
+				} catch (SQLException e) {
+					response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile recuperare prodotti");
+					return;
+				}
+				String path = "/WEB-INF/risultati.html";
+				response.setContentType("text");
+				ServletContext servletContext = getServletContext();
+				final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
+				ctx.setVariable("prodotti", prodotti);
+				templateEngine.process(path, ctx, response.getWriter());
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)

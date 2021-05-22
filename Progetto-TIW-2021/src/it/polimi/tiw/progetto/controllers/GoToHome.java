@@ -29,15 +29,12 @@ public class GoToHome extends HttpServlet{
 	private static final long serialVersionUID = 1L;
 	private Connection connection = null;
 	private TemplateEngine templateEngine;
-	
-	String folderPath = "";
 
 	public GoToHome() {
 		super();
 	}
 
 	public void init() throws ServletException {
-		folderPath = getServletContext().getInitParameter("outputpath");
 		connection = GestoreConnessione.getConnection(getServletContext());
 		ServletContext servletContext = getServletContext();
 		ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(servletContext);

@@ -48,4 +48,33 @@ public class ProdottoDAO {
 		}
 		return prodotti;
 	}
+	
+	public List<Prodotto> prendiProdottiCercati(String parolaChiave) throws SQLException{
+		List<Prodotto> prodotti = new ArrayList<Prodotto>();
+		//TODO: query da cambiare? 
+		String query = "select * from prodotto p join vendita v1 on p.Id=v1.IdProdotto "
+				+ "where (Nome LIKE %?% or Descrizione LIKE %?%) and Prezzo =	(select min(Prezzo) from vendita v2	where v2.IdProdotto = v1.IdProdotto) "
+				+ "order by Prezzo"; 
+		
+		try (PreparedStatement pstatement = connection.prepareStatement(query);) {
+			pstatement.setString(1, parolaChiave);
+			pstatement.setString(2, parolaChiave);
+			try (ResultSet result = pstatement.executeQuery();) {
+				while (result.next()) {
+					Prodotto prodotto = new Prodotto();
+					prodotto.setID(result.getInt("Id"));
+					prodotto.setNome(result.getString("Nome"));
+					prodotto.setDescrizione(result.getString("Descrizione"));
+					prodotto.setCategoria(result.getString("Categoria"));	
+					prodotto.setPrezzo(result.getFloat("Prezzo"));
+					Blob immagineBlob= result.getBlob("Immagine");
+					byte[] byteData = immagineBlob.getBytes(1, (int) immagineBlob.length()); 
+					String immagine = new String(Base64.getEncoder().encode(byteData));					
+					prodotto.setImmagine(immagine);
+					prodotti.add(prodotto);
+				}
+			}
+		}
+		return prodotti;
+	}
 }
