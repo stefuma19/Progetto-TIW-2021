@@ -30,16 +30,20 @@
 	</div>
 	<div class="prodottiRecenti">
 		<table class="tabellaCentrata">
-		<tr  th:each="p : ${prodotti}">
-			<td style="text-align: center;">
-				<a th:href="@{/GoToRisultati(idProdotto=${p.ID})}">
-					<span th:text="${p.ID}">Codice</span> - <span th:text="${p.nome}">Nome prodotto</span>
-				</a>
-			</td> 
-			<td style="text-align: center;">
-			<img th:src="@{'data:image/jpg;base64,'+${p.immagine}}" th:alt="${p.nome}" width="150" height="150" />
-			</td>
-		</tr>
+			<tr  th:each="p : ${prodotti}">
+				<td style="text-align: center;">
+					<img th:src="@{'data:image/jpg;base64,'+${p.immagine}}" th:alt="${p.nome}" width="150" height="150" />
+				</td>
+				<td style="text-align: center;">
+					<span th:text="${p.categoria}">Categoria</span><br>
+					<a th:href="@{/GoToRisultati(idProdotto=${p.ID})}">
+					<span th:text="${p.nome}">Nome prodotto</span><br></a>
+					<span th:text="${#numbers.formatDecimal(p.prezzo, 0, 'COMMA', 2, 'POINT')}">Prezzo</span> &euro;
+				</td> 
+				<td style="text-align: center;">
+					<span th:text="${p.descrizione}">Descrizione</span>
+				</td> 
+			</tr>
 		</table>		
 	</div>
 </body>

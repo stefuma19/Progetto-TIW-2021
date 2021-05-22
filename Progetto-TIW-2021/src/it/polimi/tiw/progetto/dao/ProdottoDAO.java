@@ -22,7 +22,10 @@ public class ProdottoDAO {
 	public List<Prodotto> prendi5Prodotti() throws SQLException {
 		List<Prodotto> prodotti = new ArrayList<Prodotto>();
 		
-		String query = "SELECT * FROM prodotto WHERE Categoria = ?"; //TODO: query con prezzo minimo
+		String query = "select * "
+				+ "from prodotto p join vendita v1 on p.Id=v1.IdProdotto "
+				+ "where Categoria = ? and Prezzo =	(select min(Prezzo) from vendita v2	where v2.IdProdotto = v1.IdProdotto) "
+				+ "order by RAND() limit 5"; 
 		try (PreparedStatement pstatement = connection.prepareStatement(query);) {
 			pstatement.setString(1, "Libri");
 			try (ResultSet result = pstatement.executeQuery();) {
@@ -32,7 +35,8 @@ public class ProdottoDAO {
 					prodotto.setID(result.getInt("Id"));
 					prodotto.setNome(result.getString("Nome"));
 					prodotto.setDescrizione(result.getString("Descrizione"));
-					prodotto.setCategoria(result.getString("Categoria"));					
+					prodotto.setCategoria(result.getString("Categoria"));	
+					prodotto.setPrezzo(result.getFloat("Prezzo"));
 					Blob immagineBlob= result.getBlob("Immagine");
 					byte[] byteData = immagineBlob.getBytes(1, (int) immagineBlob.length()); 
 					String immagine = new String(Base64.getEncoder().encode(byteData));					

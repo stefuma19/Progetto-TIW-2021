@@ -2,17 +2,19 @@ package it.polimi.tiw.progetto.beans;
 
 public class Prodotto {
 
-	private int ID;
+	private Integer ID;
 	private String nome;
 	private String descrizione;
 	private String categoria;
 	private String immagine;
+	private String fornitore;
+	private Float prezzo;
 	
 	
-	public int getID() {
+	public Integer getID() {
 		return ID;
 	}
-	public void setID(int iD) {
+	public void setID(Integer iD) {
 		ID = iD;
 	}
 	public String getNome() {
@@ -39,6 +41,19 @@ public class Prodotto {
 	public void setImmagine(String immagine) {
 		this.immagine = immagine;
 	}
+	public String getFornitore() {
+		return fornitore;
+	}
+	public void setFornitore(String fornitore) {
+		this.fornitore = fornitore;
+	}
+	public Float getPrezzo() {
+		return prezzo;
+	}
+	public void setPrezzo(Float prezzo) {
+		this.prezzo = prezzo;
+	}
+	
 	
 	
 	
