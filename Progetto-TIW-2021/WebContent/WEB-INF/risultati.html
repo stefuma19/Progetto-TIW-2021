@@ -39,9 +39,9 @@
 					<span th:text="${p.nome}">Nome prodotto</span><br></a>
 					<span th:text="${#numbers.formatDecimal(p.prezzo, 0, 'COMMA', 2, 'POINT')}">Prezzo</span> &euro;
 				</td> 
-				<td style="text-align: center;">
-					<span th:text="${p.descrizione}">Descrizione</span>
-				</td> 
+				<td th:if="${p.id} == ${idDaMostrare}" th:each="product : ${offerte}" 
+					th:insert="@{WEB-INF/fragment.html} :: list (product)">
+				</td>
 			</tr>
 		</table>
 		<span th:if="${prodotti.empty}">La ricerca non ha prodotto risultati</span>		

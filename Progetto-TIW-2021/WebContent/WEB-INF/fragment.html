@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+	<div th:fragment="list(product)">
+	<span th:text="${product.descrizione}">Descrizione</span>
+		<ul>
+		  <li th:text="${product.fornitore}"> Fornitore</li>
+		  <li th:text="${product.prezzo}"> Prezzo</li>
+		</ul>
+	</div>
+
+</body>
+
+</html>

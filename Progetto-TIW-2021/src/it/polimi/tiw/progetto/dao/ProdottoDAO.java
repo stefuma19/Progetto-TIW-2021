@@ -78,4 +78,33 @@ public class ProdottoDAO {
 		}
 		return prodotti;
 	}
+	
+	public List<Prodotto> prendiProdottiById(int ID) throws SQLException{
+		List<Prodotto> prodotti = new ArrayList<Prodotto>();
+		//TODO: query da cambiare? 
+		String query = "select * from prodotto p, vendita v, fornitore f "
+				+ "where p.Id=v.IdProdotto and v.IdFornitore=f.Id and p.Id = ? "
+				+ "order by Prezzo"; 
+		
+		try (PreparedStatement pstatement = connection.prepareStatement(query);) {
+			pstatement.setInt(1, ID);
+			try (ResultSet result = pstatement.executeQuery();) {
+				while (result.next()) {
+					Prodotto prodotto = new Prodotto();
+					prodotto.setID(result.getInt("Id"));
+					prodotto.setNome(result.getString("Nome"));
+					prodotto.setDescrizione(result.getString("Descrizione"));
+					prodotto.setCategoria(result.getString("Categoria"));	
+					prodotto.setPrezzo(result.getFloat("Prezzo"));
+					prodotto.setFornitore(result.getString("NomeFor"));
+					Blob immagineBlob= result.getBlob("Immagine");
+					byte[] byteData = immagineBlob.getBytes(1, (int) immagineBlob.length()); 
+					String immagine = new String(Base64.getEncoder().encode(byteData));					
+					prodotto.setImmagine(immagine);
+					prodotti.add(prodotto);
+				}
+			}
+		}
+		return prodotti;
+	}
 }
