@@ -52,11 +52,11 @@ public class GoToHome extends HttpServlet{
 		//HttpSession session = request.getSession();
 		//Utente usr = (Utente) session.getAttribute("utente");
 		ProdottoDAO prodottoDAO = new ProdottoDAO(connection);
+		Queue<Integer> listaVisualizzati = new LinkedList<>();
 		List<Prodotto> prodotti = new ArrayList<Prodotto>();
 		
 		HttpSession session = request.getSession();
 		if(session.getAttribute("listaVisualizzati") != null) {
-			Queue<Integer> listaVisualizzati = new LinkedList<>();
 			listaVisualizzati = (Queue<Integer>) session.getAttribute("listaVisualizzati");
 			for(Integer id : listaVisualizzati)
 				try {
@@ -68,7 +68,7 @@ public class GoToHome extends HttpServlet{
 		}
 		if(prodotti.size()<5)
 		try {
-			prodotti.addAll(prodottoDAO.prendiProdotti(5-prodotti.size()));
+			prodotti.addAll(prodottoDAO.prendiProdotti(listaVisualizzati,5-prodotti.size()));
 		} catch (SQLException e) {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile recuperare prodotti random");
 			return;

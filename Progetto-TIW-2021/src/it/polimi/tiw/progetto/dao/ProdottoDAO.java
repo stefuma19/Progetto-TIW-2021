@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.Queue;
 
 import it.polimi.tiw.progetto.beans.Prodotto;
 
@@ -19,19 +20,44 @@ public class ProdottoDAO {
 		this.connection = connection;
 	}
 	
-	public List<Prodotto> prendiProdotti(int quantita) throws SQLException {
+	public List<Prodotto> prendiProdotti(Queue<Integer> presenti, int quantita) throws SQLException {
 		List<Prodotto> prodotti = new ArrayList<Prodotto>();
-		
-		String query = "select * "
+		String query;
+		boolean valido = presenti!=null && !presenti.isEmpty();
+		if(valido) {
+			String valoriNotIn = "?";
+			for(int i=1;i<presenti.size();i++) {
+				valoriNotIn += ",?";
+			}
+			query = "select * "
+					+ "from prodotto p join vendita v1 on p.Id=v1.IdProdotto "
+					+ "where Categoria = ? and Id not in ("+valoriNotIn+") and Prezzo =	(select min(Prezzo) from vendita v2	where v2.IdProdotto = v1.IdProdotto) "
+					+ "order by RAND() limit ?"; 
+		}
+		else {
+			query = "select * "
 				+ "from prodotto p join vendita v1 on p.Id=v1.IdProdotto "
 				+ "where Categoria = ? and Prezzo =	(select min(Prezzo) from vendita v2	where v2.IdProdotto = v1.IdProdotto) "
 				+ "order by RAND() limit ?"; 
+		}
+		
+		
 		try (PreparedStatement pstatement = connection.prepareStatement(query);) {
 			pstatement.setString(1, "Libri");
-			pstatement.setInt(2, quantita);
+			if(valido) {
+				int i=0;
+				Object[] array = presenti.toArray();
+				while(i<presenti.size()) {
+					pstatement.setInt(i+2, (Integer)array[i]);
+					i++;
+				}
+				pstatement.setInt(i+2, quantita);
+			}
+			else 
+				pstatement.setInt(2, quantita);
 			try (ResultSet result = pstatement.executeQuery();) {
 				int i = 0;
-				while (result.next() && i<5) {
+				while (result.next() && i<quantita) {
 					Prodotto prodotto = new Prodotto();
 					prodotto.setID(result.getInt("Id"));
 					prodotto.setNome(result.getString("Nome"));

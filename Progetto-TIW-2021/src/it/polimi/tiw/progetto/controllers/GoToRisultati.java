@@ -78,9 +78,11 @@ public class GoToRisultati extends HttpServlet{
 			}
 			else {
 				listaVisualizzati = (Queue<Integer>) session.getAttribute("listaVisualizzati");
-				if(listaVisualizzati.size()==5)
-					listaVisualizzati.remove();
-				listaVisualizzati.add(idProdotto);
+				if(!listaVisualizzati.contains(idProdotto)) {
+					if(listaVisualizzati.size()==5)
+						listaVisualizzati.remove();
+					listaVisualizzati.add(idProdotto);
+				}
 			}
 			
 			ctx.setVariable("idDaMostrare", request.getParameter("idProdotto")); 
