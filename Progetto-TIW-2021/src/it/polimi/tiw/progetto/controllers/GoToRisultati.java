@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -12,6 +14,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
@@ -66,10 +69,24 @@ public class GoToRisultati extends HttpServlet{
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
 		
 		if(request.getParameter("idProdotto") != null) {
+			int idProdotto = Integer.parseInt(request.getParameter("idProdotto"));
+			Queue<Integer> listaVisualizzati = new LinkedList<>();
+			HttpSession session = request.getSession();
+			if (session.getAttribute("listaVisualizzati") == null) {
+				listaVisualizzati.add(idProdotto);
+				request.getSession().setAttribute("listaVisualizzati", listaVisualizzati);
+			}
+			else {
+				listaVisualizzati = (Queue<Integer>) session.getAttribute("listaVisualizzati");
+				if(listaVisualizzati.size()==5)
+					listaVisualizzati.remove();
+				listaVisualizzati.add(idProdotto);
+			}
+			
 			ctx.setVariable("idDaMostrare", request.getParameter("idProdotto")); 
 			
 			try {
-				offerte = prodottoDAO.prendiProdottiById(Integer.parseInt(request.getParameter("idProdotto")));
+				offerte = prodottoDAO.prendiOfferteById(Integer.parseInt(request.getParameter("idProdotto")));
 			} catch (SQLException e) {
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile recuperare prodotti da id");
 				return;

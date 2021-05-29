@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -52,12 +54,27 @@ public class GoToHome extends HttpServlet{
 		ProdottoDAO prodottoDAO = new ProdottoDAO(connection);
 		List<Prodotto> prodotti = new ArrayList<Prodotto>();
 		
+		HttpSession session = request.getSession();
+		if(session.getAttribute("listaVisualizzati") != null) {
+			Queue<Integer> listaVisualizzati = new LinkedList<>();
+			listaVisualizzati = (Queue<Integer>) session.getAttribute("listaVisualizzati");
+			for(Integer id : listaVisualizzati)
+				try {
+					prodotti.add(prodottoDAO.prendiProdottoById(id));
+				}catch (SQLException e) {
+					response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile recuperare prodotti già visualizzati");
+					return;
+				}
+		}
+		if(prodotti.size()<5)
 		try {
-			prodotti = prodottoDAO.prendi5Prodotti();
+			prodotti.addAll(prodottoDAO.prendiProdotti(5-prodotti.size()));
 		} catch (SQLException e) {
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile recuperare prodotti");
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile recuperare prodotti random");
 			return;
 		}
+		
+	
 		String path = "/WEB-INF/home.html";
 		response.setContentType("text");
 		ServletContext servletContext = getServletContext();
