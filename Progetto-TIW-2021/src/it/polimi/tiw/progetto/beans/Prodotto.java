@@ -7,9 +7,12 @@ public class Prodotto {
 	private String descrizione;
 	private String categoria;
 	private String immagine;
-	private String fornitore;
+	private Fornitore fornitore;
 	private Float prezzo;
 	
+	public Prodotto() {
+		fornitore = new Fornitore();
+	}
 	
 	public Integer getID() {
 		return ID;
@@ -41,10 +44,10 @@ public class Prodotto {
 	public void setImmagine(String immagine) {
 		this.immagine = immagine;
 	}
-	public String getFornitore() {
+	public Fornitore getFornitore() {
 		return fornitore;
 	}
-	public void setFornitore(String fornitore) {
+	public void setFornitore(Fornitore fornitore) {
 		this.fornitore = fornitore;
 	}
 	public Float getPrezzo() {

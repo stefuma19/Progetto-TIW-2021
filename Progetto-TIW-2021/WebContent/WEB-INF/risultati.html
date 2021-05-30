@@ -41,7 +41,7 @@
 				</td> 
 				<td th:if="${p.id} == ${idDaMostrare}">
 					<table>
-						<tr th:text="${p.descrizione}">
+						<tr th:text="${p.descrizione}">Descrizione</tr>
 						<tr th:each="product : ${offerte}" th:insert="@{WEB-INF/fragment.html} :: list (product)">
 						</tr>
 					</table>

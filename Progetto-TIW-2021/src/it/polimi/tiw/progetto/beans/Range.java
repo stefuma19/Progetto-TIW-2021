@@ -8,6 +8,14 @@ public class Range {
 	int prezzo;
 	
 	
+	
+	public Range(int iD, int min, int max, int prezzo) {
+		super();
+		ID = iD;
+		this.min = min;
+		this.max = max;
+		this.prezzo = prezzo;
+	}
 	public int getID() {
 		return ID;
 	}

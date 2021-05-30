@@ -1,15 +1,19 @@
 package it.polimi.tiw.progetto.beans;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Fornitore {
 
 	private int ID;
 	private String nome;
-	private float valutazione; 
+	private String valutazione; 
 	private int soglia;
 	private List<Range> politica;
 	
+	public Fornitore() {
+		politica = new ArrayList<Range>();
+	}
 	
 	public int getID() {
 		return ID;
@@ -23,10 +27,10 @@ public class Fornitore {
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
-	public float getValutazione() {
+	public String getValutazione() {
 		return valutazione;
 	}
-	public void setValutazione(float valutazione) {
+	public void setValutazione(String valutazione) {
 		this.valutazione = valutazione;
 	}
 	public int getSoglia() {

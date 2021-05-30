@@ -3,14 +3,37 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <body>
-	<div th:fragment="list(product)">
-		<ul>
-		  <li>
-		  <span th:text="${product.fornitore}"> Fornitore</span> - 
-		  <span th:text="${#numbers.formatDecimal(product.prezzo, 0, 'COMMA', 2, 'POINT')}">Prezzo</span>&euro;
-		  </li>
-		</ul>
-	</div>
+<table>
+<tr>
+<td th:fragment="list(product)">
+	<table style="width:100%">
+	
+		<tr>
+			  <td><span th:text="${product.fornitore.nome}"> Fornitore</span> - 
+			  <span th:text="${product.fornitore.valutazione}"> Valutazione</span>
+			  <span th:text="${#numbers.formatDecimal(product.prezzo, 0, 'COMMA', 2, 'POINT')}">Prezzo</span>&euro;
+			  </td>
+			  <td>
+			  La soglia per la spedizione gratis è di: <span th:text="${#numbers.formatDecimal(product.fornitore.soglia, 0, 'COMMA', 2, 'POINT')}">Soglia</span>&euro;
+			  </td>
+			  
+		</tr>
+		<tr >
+			  <td><p th:each="fascia : ${product.fornitore.politica}"> # minimo prodotti: <span th:text="${fascia.Min}"></span>, # massimo prodotti: <span th:text="${fascia.Max}"></span> - Prezzo: <span th:text="${fascia.Prezzo}"></span>&euro;
+			  </p>
+			  <td>
+			  	<form action="//TODO: mettere nel carrello" method="POST"> 
+						<input type="text" name="quantita" id="quantita">
+						<input type="submit" value="Inserisci">
+				</form>
+			  </td>
+		</tr>
+		
+		
+	</table>
+</td>
+</tr>
+</table>
 
 </body>
 
