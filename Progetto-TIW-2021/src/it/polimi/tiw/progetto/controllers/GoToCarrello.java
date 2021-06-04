@@ -58,19 +58,22 @@ public class GoToCarrello extends HttpServlet{
 		}
 		
 		Cookie[] cookies = request.getCookies();
+		List<Prodotto> prodotti = new ArrayList<>();
 		if (cookies != null) {
-			for (int i = 0; i < cookies.length; i++) {
+			for (int i = 0; i < cookies.length; i++) { //TODO: x evitare il cookie JSESSIONID?
 				List<Prodotto> listaForn = new ArrayList<Prodotto>();
-				List<Prodotto> prodotti = CookieParser.parseCookie(cookies[i]);
-				for(Prodotto p : prodotti) {
-					try {
-						listaForn.add(prodottoDAO.prendiOffertaByCookieInfo(p));
-					} catch (SQLException e) {
-						response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile recuperare prodotti da keyword");
-						return;
+				if(!cookies[i].getName().equals("JSESSIONID")) {
+					prodotti = CookieParser.parseCookie(cookies[i]);
+					for(Prodotto p : prodotti) {
+						try {
+							listaForn.add(prodottoDAO.prendiOffertaByCookieInfo(p));
+						} catch (SQLException e) {
+							response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile recuperare prodotti da cookie info");
+							return;
+						}
 					}
+					daMostrare.add(listaForn);
 				}
-				daMostrare.add(listaForn);
 			}
 		}
 		
@@ -78,7 +81,7 @@ public class GoToCarrello extends HttpServlet{
 		String path = "/WEB-INF/carrello.html";
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-		ctx.setVariable("prodotti", daMostrare);
+		ctx.setVariable("fornitori", daMostrare);
 		templateEngine.process(path, ctx, response.getWriter());
 	}
 

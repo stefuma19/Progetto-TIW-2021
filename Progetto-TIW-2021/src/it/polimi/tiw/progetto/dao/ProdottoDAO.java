@@ -163,7 +163,7 @@ public class ProdottoDAO {
 	public Prodotto prendiOffertaByCookieInfo(Prodotto prodotto) throws SQLException{ 
 		
 		String query = "select * from prodotto pr, vendita v, fornitore f, politica po "
-				+ "where pr.Id=v.IdProdotto and v.IdFornitore=f.Id and po.Id=f.IdPoliticaForn and pr.Id = ? and f.Id= ?"
+				+ "where pr.Id=v.IdProdotto and v.IdFornitore=f.Id and po.Id=f.IdPoliticaForn and pr.Id = ? and f.Id= ? "
 				+ "order by Prezzo"; 
 		
 		try (PreparedStatement pstatement = connection.prepareStatement(query);) {
@@ -175,7 +175,6 @@ public class ProdottoDAO {
 					prodotto.setDescrizione(result.getString("Descrizione"));
 					prodotto.setCategoria(result.getString("Categoria"));	
 					prodotto.setPrezzo(result.getFloat("Prezzo"));
-					prodotto.setQuantita(result.getInt("Quantita"));
 					prodotto.getFornitore().setNome(result.getString("NomeFor"));
 					prodotto.getFornitore().setValutazione(result.getString("Valutazione"));
 					prodotto.getFornitore().setSoglia(result.getInt("Soglia"));
