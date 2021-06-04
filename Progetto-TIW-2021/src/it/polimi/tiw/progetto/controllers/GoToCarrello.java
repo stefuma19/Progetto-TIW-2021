@@ -1,6 +1,8 @@
 package it.polimi.tiw.progetto.controllers;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,16 +22,23 @@ import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 import com.mysql.cj.Session;
 
+import it.polimi.tiw.progetto.beans.Prodotto;
+import it.polimi.tiw.progetto.dao.ProdottoDAO;
+import it.polimi.tiw.progetto.utils.CookieParser;
+import it.polimi.tiw.progetto.utils.GestoreConnessione;
+
 @WebServlet("/GoToCarrello")
 public class GoToCarrello extends HttpServlet{
 	private static final long serialVersionUID = 1L;
 	private TemplateEngine templateEngine;
+	private Connection connection = null;
 
 	public GoToCarrello() {
 		super();
 	}
 
 	public void init() throws ServletException {
+		connection = GestoreConnessione.getConnection(getServletContext());
 		ServletContext servletContext = getServletContext();
 		ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(servletContext);
 		templateResolver.setTemplateMode(TemplateMode.HTML);
@@ -40,6 +49,45 @@ public class GoToCarrello extends HttpServlet{
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		
+		List<List<Prodotto>> daMostrare = new ArrayList<List<Prodotto>>();
+		ProdottoDAO prodottoDAO = new ProdottoDAO(connection);
+		
+		if(request.getParameter("IdFor") != null) {
+			response = addCookie(request, response);
+		}
+		
+		Cookie[] cookies = request.getCookies();
+		if (cookies != null) {
+			for (int i = 0; i < cookies.length; i++) {
+				List<Prodotto> listaForn = new ArrayList<Prodotto>();
+				List<Prodotto> prodotti = CookieParser.parseCookie(cookies[i]);
+				for(Prodotto p : prodotti) {
+					try {
+						listaForn.add(prodottoDAO.prendiOffertaByCookieInfo(p));
+					} catch (SQLException e) {
+						response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile recuperare prodotti da keyword");
+						return;
+					}
+				}
+				daMostrare.add(listaForn);
+			}
+		}
+		
+
+		String path = "/WEB-INF/carrello.html";
+		ServletContext servletContext = getServletContext();
+		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
+		ctx.setVariable("prodotti", daMostrare);
+		templateEngine.process(path, ctx, response.getWriter());
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		doGet(request, response);
+	}
+	
+	private HttpServletResponse addCookie(HttpServletRequest request, HttpServletResponse response) {
 		boolean primo=true;  //se dobbiamo creare un cookie per il fornitore
 		Cookie[] cookies = request.getCookies();
 		if (cookies != null) {
@@ -65,17 +113,7 @@ public class GoToCarrello extends HttpServlet{
 			Cookie coo = new Cookie(nome, valore);
 			coo.setMaxAge(3600);
 			response.addCookie(coo);
-		} 
-		
-		
-		String path = "/WEB-INF/carrello.html";
-		ServletContext servletContext = getServletContext();
-		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-		templateEngine.process(path, ctx, response.getWriter());
-	}
-
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		doGet(request, response);
+		}
+		return response;
 	}
 }

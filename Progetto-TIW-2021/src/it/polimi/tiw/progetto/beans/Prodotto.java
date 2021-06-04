@@ -9,6 +9,7 @@ public class Prodotto {
 	private String immagine;
 	private Fornitore fornitore;
 	private Float prezzo;
+	private Integer quantita;
 	
 	public Prodotto() {
 		fornitore = new Fornitore();
@@ -45,7 +46,7 @@ public class Prodotto {
 		this.immagine = immagine;
 	}
 	public Fornitore getFornitore() {
-		return fornitore;
+		return this.fornitore;
 	}
 	public void setFornitore(Fornitore fornitore) {
 		this.fornitore = fornitore;
@@ -56,7 +57,12 @@ public class Prodotto {
 	public void setPrezzo(Float prezzo) {
 		this.prezzo = prezzo;
 	}
-	
+	public Integer getQuantita() {
+		return quantita;
+	}
+	public void setQuantita(Integer quantita) {
+		this.quantita = quantita;
+	}
 	
 	
 	

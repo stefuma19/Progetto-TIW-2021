@@ -88,7 +88,7 @@ public class GoToRisultati extends HttpServlet{
 			ctx.setVariable("idDaMostrare", request.getParameter("idProdotto")); 
 			
 			try {
-				offerte = prodottoDAO.prendiOfferteById(Integer.parseInt(request.getParameter("idProdotto")));
+				offerte = prodottoDAO.prendiOfferteByIdProdotto(Integer.parseInt(request.getParameter("idProdotto")));
 			} catch (SQLException e) {
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile recuperare prodotti da id");
 				return;

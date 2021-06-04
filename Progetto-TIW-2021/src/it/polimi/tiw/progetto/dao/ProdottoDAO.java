@@ -107,10 +107,10 @@ public class ProdottoDAO {
 		return prodotti;
 	}
 	
-	public List<Prodotto> prendiOfferteById(int ID) throws SQLException{ 
+	public List<Prodotto> prendiOfferteByIdProdotto(int ID) throws SQLException{ 
 		//TODO: aggiungo valutazione, face, spediz gratuita, # prod nel carrelo e valore totale di questo fornitore. LB19
 		List<Prodotto> prodotti = new ArrayList<Prodotto>();
-		List<Range> fasce = new ArrayList<Range>();
+		
 		//TODO: query da cambiare? 
 		String query = "select * from prodotto pr, vendita v, fornitore f, politica po "
 				+ "where pr.Id=v.IdProdotto and v.IdFornitore=f.Id and po.Id=f.IdPoliticaForn and pr.Id = ? "
@@ -142,6 +142,7 @@ public class ProdottoDAO {
 		}
 		
 		for(Prodotto p : prodotti) {
+			List<Range> fasce = new ArrayList<Range>();
 			query = "select * from fornitore fo, politica po, fascia fa, composizione co "
 					+ "where po.Id=fo.IdPoliticaForn and fa.IdFascia=co.IdFasceComp and co.IdPoliticaComp=po.Id and fo.Id = ?"; 
 			try (PreparedStatement pstatement = connection.prepareStatement(query);) {
@@ -157,6 +158,52 @@ public class ProdottoDAO {
 		}
 		
 		return prodotti;
+	}
+	
+	public Prodotto prendiOffertaByCookieInfo(Prodotto prodotto) throws SQLException{ 
+		
+		String query = "select * from prodotto pr, vendita v, fornitore f, politica po "
+				+ "where pr.Id=v.IdProdotto and v.IdFornitore=f.Id and po.Id=f.IdPoliticaForn and pr.Id = ? and f.Id= ?"
+				+ "order by Prezzo"; 
+		
+		try (PreparedStatement pstatement = connection.prepareStatement(query);) {
+			pstatement.setInt(1, prodotto.getID());
+			pstatement.setInt(2, prodotto.getFornitore().getID());
+			try (ResultSet result = pstatement.executeQuery();) {
+				while (result.next()) {
+					prodotto.setNome(result.getString("Nome"));
+					prodotto.setDescrizione(result.getString("Descrizione"));
+					prodotto.setCategoria(result.getString("Categoria"));	
+					prodotto.setPrezzo(result.getFloat("Prezzo"));
+					prodotto.setQuantita(result.getInt("Quantita"));
+					prodotto.getFornitore().setNome(result.getString("NomeFor"));
+					prodotto.getFornitore().setValutazione(result.getString("Valutazione"));
+					prodotto.getFornitore().setSoglia(result.getInt("Soglia"));
+					prodotto.getFornitore().setID(result.getInt("IdFornitore"));
+					Blob immagineBlob= result.getBlob("Immagine");
+					byte[] byteData = immagineBlob.getBytes(1, (int) immagineBlob.length()); 
+					String immagine = new String(Base64.getEncoder().encode(byteData));					
+					prodotto.setImmagine(immagine);
+				}
+			}
+		}
+		
+		List<Range> fasce = new ArrayList<Range>();
+		query = "select * from fornitore fo, politica po, fascia fa, composizione co "
+				+ "where po.Id=fo.IdPoliticaForn and fa.IdFascia=co.IdFasceComp and co.IdPoliticaComp=po.Id and fo.Id = ?"; 
+		try (PreparedStatement pstatement = connection.prepareStatement(query);) {
+			pstatement.setInt(1, prodotto.getFornitore().getID());
+			try (ResultSet result = pstatement.executeQuery();) {
+				while (result.next()) {
+					Range fascia = new Range(result.getInt("IdFascia"),result.getInt("Min"),result.getInt("Max"),result.getInt("Prezzo"));
+					fasce.add(fascia);
+				}
+			}
+		}
+		prodotto.getFornitore().setPolitica(fasce);
+		
+		
+		return prodotto;
 	}
 	
 	public Prodotto prendiProdottoById(int ID) throws SQLException{
