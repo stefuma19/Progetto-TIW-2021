@@ -27,4 +27,20 @@ public class CookieParser {
 		}
 		return carrello;
 	}
+	
+	public static Cookie creaCookieByProdotti(List<Prodotto> prodotti) {
+		if(prodotti.size() != 0){
+			String nome = String.valueOf(prodotti.get(0).getFornitore().getID());
+			boolean primo = true;
+			String valore = "";
+			for(Prodotto p : prodotti) {
+				valore += ((primo)? "" : "_") + p.getID() + "-" + p.getQuantita();
+				primo = false;
+			}
+			Cookie c = new Cookie(nome,valore);
+			return c;
+		}else {
+			return null;
+		}
+	}
 }

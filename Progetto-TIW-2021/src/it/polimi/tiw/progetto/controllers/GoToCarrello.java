@@ -100,10 +100,24 @@ public class GoToCarrello extends HttpServlet{
 				if(nome.equals(request.getParameter("IdFor"))) {
 					primo = false;
 					String valore = c.getValue(); //TODO: controllo se ho già comprato quel prodotto e ne aumento solo la quantita, serve il parser
-					valore += "_" + request.getParameter("IdProd") + "-" + request.getParameter("quantita");
-					Cookie coo = new Cookie(nome, valore);
-					coo.setMaxAge(3600);
-					response.addCookie(coo);
+					List<Prodotto> prodottiPresenti = CookieParser.parseCookie(c);
+					boolean presente = false;
+					for(Prodotto p: prodottiPresenti) {
+						if(p.getID() == Integer.parseInt(request.getParameter("IdProd"))) {
+							p.setQuantita(p.getQuantita() + Integer.parseInt(request.getParameter("quantita")));  //TODO: lavora per copia? LB19
+							presente = true;
+						}
+					}
+					if(presente) {
+						Cookie coo = CookieParser.creaCookieByProdotti(prodottiPresenti);
+						coo.setMaxAge(3600);
+						response.addCookie(coo);
+					}else {
+						valore += "_" + request.getParameter("IdProd") + "-" + request.getParameter("quantita");
+						Cookie coo = new Cookie(nome, valore);
+						coo.setMaxAge(3600);
+						response.addCookie(coo);
+					}
 					break;
 				}
 			}
