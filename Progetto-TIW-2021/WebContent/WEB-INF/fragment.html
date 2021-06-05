@@ -9,7 +9,7 @@
 	<table style="width:100%">
 	
 		<tr>
-			  <td><span th:text="${product.fornitore.nome}"> Fornitore</span> - 
+			  <td>&#9679;<span th:text="${product.fornitore.nome}"> Fornitore</span> - 
 			  <span th:text="${product.fornitore.valutazione}"> Valutazione</span>
 			  <span th:text="${#numbers.formatDecimal(product.prezzo, 0, 'COMMA', 2, 'POINT')}">Prezzo</span>&euro;
 			  </td>

@@ -8,7 +8,7 @@
 </head>
 <body>
 	<div class="logUtente">
-		Benvenut* <span th:text="${session.utente.nome}">utente</span>
+		Felice di vederti <span th:text="${session.utente.nome}">utente</span>
 		&emsp;<a href="Logout">Logout</a>
 	</div>
 	<div class="barraMenu">
@@ -28,20 +28,22 @@
 		</table>	
 	</div>
 	<div class="prodottiRisultati">
-		<table class="tabellaCentrata">
-			<tr  th:each="p : ${prodotti}">
-				<td style="text-align: center;">
+		<table class="tabellaCentrata" style="width: 990px;" th:each="p : ${prodotti}">
+			<tr>
+				<td style="text-align: center; padding-right: 5px; width: 150px;">
 					<img th:src="@{'data:image/jpg;base64,'+${p.immagine}}" th:alt="${p.nome}" width="150" height="150" />
 				</td>
-				<td style="text-align: center;">
-					<span th:text="${p.categoria}">Categoria</span><br>
+				<td valign="top">
+					<span th:text="${p.categoria}">Categoria</span><br><br>
 					<a th:href="@{/GoToRisultati(idProdotto=${p.ID})}">
-					<span th:text="${p.nome}">Nome prodotto</span><br></a>
-					<span th:text="${#numbers.formatDecimal(p.prezzo, 0, 'COMMA', 2, 'POINT')}">Prezzo</span> &euro;
+					<span th:text="${p.nome}">Nome prodotto</span></a> - 
+					<span th:text="${#numbers.formatDecimal(p.prezzo, 0, 'COMMA', 2, 'POINT')}">Prezzo</span> &euro;<br><br>
+					<span th:if="${p.id} == ${idDaMostrare}" th:text="${p.descrizione}">Descrizione</span>
 				</td> 
-				<td th:if="${p.id} == ${idDaMostrare}">
+			</tr>
+			<tr th:if="${p.id} == ${idDaMostrare}">
+				<td colspan="2" style="padding-left: 155px;">
 					<table>
-						<tr th:text="${p.descrizione}">Descrizione</tr>
 						<tr th:each="product : ${offerte}" th:insert="@{WEB-INF/fragment.html} :: product">
 						</tr>
 					</table>
