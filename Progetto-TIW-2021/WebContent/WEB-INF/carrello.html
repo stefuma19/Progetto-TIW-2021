@@ -32,7 +32,7 @@
 			<tr  th:each="f : ${fornitori}">
 				<td>
 					<table style="border: 1px solid black; width: 100%;">
-						<tr><td colspan="3"><span th:text="${f.IdForn}"></span><br></td></tr>
+						<tr><td colspan="3"><span th:text="${f.fornitore.nome}"></span><br></td></tr>
 						<tr th:each="p : ${f.prodotti}">
 							<td style="width: 110px;">
 								<img th:src="@{'data:image/jpg;base64,'+${p.immagine}}" th:alt="${p.nome}" width="110" height="110" />
@@ -49,16 +49,15 @@
 						</tr>
 						<tr style="text-align: right;">
 							<td colspan="2"><span>Totale:</span></td>
-							<td><span>00.00</span> &euro;</td>
+							<td><span th:text="${f.totaleCosto}"></span> &euro;</td>
 						</tr>
 						<tr style="text-align: right;">
 							<td colspan="2"><span>Spedizione:</span></td>
-							<td><span>00.00</span> &euro;</td>
+							<td><span th:text="${f.costoSpedizione}"></span> &euro;</td>
 						</tr>
 						<tr style="text-align: right;">
 							<td colspan="3">
-								<!-- <form th:action="@{/GoToOrdini(idForn=${p.fornitore.ID})}" method="POST"> --><!-- SI FA COSI'? -->
-									<form th:action="GoToOrdini" method="POST">
+								    <form th:action="@{/GoToOrdini(idForn=${f.fornitore.ID})}" method="POST"> <!-- SI FA COSI'? -->
 									<input type="submit" value="ORDINA">
 								</form>
 							</td>

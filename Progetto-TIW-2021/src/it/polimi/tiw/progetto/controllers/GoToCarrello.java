@@ -26,6 +26,8 @@ import com.mysql.cj.Session;
 import it.polimi.tiw.progetto.beans.Carrello;
 import it.polimi.tiw.progetto.beans.Prodotto;
 import it.polimi.tiw.progetto.beans.Utente;
+import it.polimi.tiw.progetto.dao.FornitoreDAO;
+import it.polimi.tiw.progetto.dao.OrdineDAO;
 import it.polimi.tiw.progetto.dao.ProdottoDAO;
 import it.polimi.tiw.progetto.utils.CookieParser;
 import it.polimi.tiw.progetto.utils.GestoreConnessione;
@@ -55,6 +57,8 @@ public class GoToCarrello extends HttpServlet{
 		
 		List<Carrello> daMostrare = new ArrayList<Carrello>();
 		ProdottoDAO prodottoDAO = new ProdottoDAO(connection);
+		FornitoreDAO fornitoreDAO = new FornitoreDAO(connection);
+		OrdineDAO ordineDAO = new OrdineDAO();
 		
 		if(request.getParameter("IdFor") != null) {
 			response = addCookie(request, response);
@@ -69,7 +73,12 @@ public class GoToCarrello extends HttpServlet{
 					if(cookies[i].getName().split("-")[0].equals(String.valueOf((((Utente)s.getAttribute("utente")).getId()))))
 					{
 						Carrello carrello = new Carrello();
-						carrello.setIdForn(Integer.parseInt(cookies[i].getName().split("-")[1]));
+						try {
+							carrello.setFornitore(fornitoreDAO.prendiFornitoreById(Integer.parseInt(cookies[i].getName().split("-")[1])));
+						} catch (SQLException e) {
+							response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile recuperare fornitore da cookie");
+							return;
+						}
 						prodotti = CookieParser.parseCookie(cookies[i]);
 						for(Prodotto p : prodotti) {
 							try {
@@ -84,6 +93,10 @@ public class GoToCarrello extends HttpServlet{
 					}
 				}
 			}
+		}
+		
+		for(Carrello c : daMostrare) {
+			c = ordineDAO.calcolaCosti(c); 
 		}
 		
 		//TODO: per ogni carrello calcolo spesa totale e costo spedizione e setto nome forn

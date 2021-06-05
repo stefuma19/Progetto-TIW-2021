@@ -4,16 +4,16 @@ import java.util.List;
 
 public class Carrello {
 
-	private int IdForn;
+	private Fornitore fornitore;
 	private List<Prodotto> prodotti;
-	private int totaleCosto;
+	private float totaleCosto;
 	private int costoSpedizione;
 	
-	public int getIdForn() {
-		return IdForn;
+	public Fornitore getFornitore() {
+		return fornitore;
 	}
-	public void setIdForn(int idForn) {
-		IdForn = idForn;
+	public void setFornitore(Fornitore fornitore) {
+		this.fornitore = fornitore;
 	}
 	public List<Prodotto> getProdotti() {
 		return prodotti;
@@ -21,10 +21,10 @@ public class Carrello {
 	public void setProdotti(List<Prodotto> prodotti) {
 		this.prodotti = prodotti;
 	}
-	public int getTotaleCosto() {
+	public float getTotaleCosto() {
 		return totaleCosto;
 	}
-	public void setTotaleCosto(int totaleCosto) {
+	public void setTotaleCosto(float totaleCosto) {
 		this.totaleCosto = totaleCosto;
 	}
 	public int getCostoSpedizione() {

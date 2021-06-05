@@ -162,6 +162,8 @@ public class ProdottoDAO {
 	
 	public Prodotto prendiOffertaByCookieInfo(Prodotto prodotto) throws SQLException{ 
 		
+		FornitoreDAO fornitoreDAO = new FornitoreDAO(connection);
+		//TODO: tolgo info del fornitore
 		String query = "select * from prodotto pr, vendita v, fornitore f, politica po "
 				+ "where pr.Id=v.IdProdotto and v.IdFornitore=f.Id and po.Id=f.IdPoliticaForn and pr.Id = ? and f.Id= ? "
 				+ "order by Prezzo"; 
@@ -175,10 +177,12 @@ public class ProdottoDAO {
 					prodotto.setDescrizione(result.getString("Descrizione"));
 					prodotto.setCategoria(result.getString("Categoria"));	
 					prodotto.setPrezzo(result.getFloat("Prezzo"));
-					prodotto.getFornitore().setNome(result.getString("NomeFor"));
+					
+					prodotto.setFornitore(fornitoreDAO.prendiFornitoreById(prodotto.getFornitore().getID()));
+					/*prodotto.getFornitore().setNome(result.getString("NomeFor"));
 					prodotto.getFornitore().setValutazione(result.getString("Valutazione"));
-					prodotto.getFornitore().setSoglia(result.getInt("Soglia"));
-					prodotto.getFornitore().setID(result.getInt("IdFornitore"));
+					prodotto.getFornitore().setSoglia((result.getString("Soglia") == null) ? -1 : Integer.parseInt(result.getString("Soglia")));  
+					prodotto.getFornitore().setID(result.getInt("IdFornitore"));*/
 					Blob immagineBlob= result.getBlob("Immagine");
 					byte[] byteData = immagineBlob.getBytes(1, (int) immagineBlob.length()); 
 					String immagine = new String(Base64.getEncoder().encode(byteData));					
