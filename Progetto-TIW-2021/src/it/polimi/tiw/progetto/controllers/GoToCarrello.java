@@ -13,6 +13,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
@@ -23,6 +24,7 @@ import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 import com.mysql.cj.Session;
 
 import it.polimi.tiw.progetto.beans.Prodotto;
+import it.polimi.tiw.progetto.beans.Utente;
 import it.polimi.tiw.progetto.dao.ProdottoDAO;
 import it.polimi.tiw.progetto.utils.CookieParser;
 import it.polimi.tiw.progetto.utils.GestoreConnessione;
@@ -56,28 +58,30 @@ public class GoToCarrello extends HttpServlet{
 		if(request.getParameter("IdFor") != null) {
 			response = addCookie(request, response);
 		}
-		
+		HttpSession s = request.getSession(); 
 		Cookie[] cookies = request.getCookies();
 		List<Prodotto> prodotti = new ArrayList<>();
 		if (cookies != null) {
 			for (int i = 0; i < cookies.length; i++) { //TODO: x evitare il cookie JSESSIONID?
 				List<Prodotto> listaForn = new ArrayList<Prodotto>();
 				if(!cookies[i].getName().equals("JSESSIONID")) {
-					prodotti = CookieParser.parseCookie(cookies[i]);
-					for(Prodotto p : prodotti) {
-						try {
-							listaForn.add(prodottoDAO.prendiOffertaByCookieInfo(p));
-						} catch (SQLException e) {
-							response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile recuperare prodotti da cookie info");
-							return;
+					if(cookies[i].getName().split("-")[0].equals(String.valueOf((((Utente)s.getAttribute("utente")).getId()))))
+					{
+						prodotti = CookieParser.parseCookie(cookies[i]);
+						for(Prodotto p : prodotti) {
+							try {
+								listaForn.add(prodottoDAO.prendiOffertaByCookieInfo(p));
+							} catch (SQLException e) {
+								response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile recuperare prodotti da cookie info");
+								return;
+							}
 						}
+						daMostrare.add(listaForn);
 					}
-					daMostrare.add(listaForn);
 				}
 			}
 		}
 		
-
 		String path = "/WEB-INF/carrello.html";
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
@@ -93,11 +97,12 @@ public class GoToCarrello extends HttpServlet{
 	private HttpServletResponse addCookie(HttpServletRequest request, HttpServletResponse response) {
 		boolean primo=true;  //se dobbiamo creare un cookie per il fornitore
 		Cookie[] cookies = request.getCookies();
+		HttpSession s = request.getSession(); 
 		if (cookies != null) {
 			for (int i = 0; i < cookies.length; i++) {
 				Cookie c = cookies[i];
 				String nome = c.getName();
-				if(nome.equals(request.getParameter("IdFor"))) {
+				if(nome.equals(((Utente)s.getAttribute("utente")).getId()+"-"+request.getParameter("IdFor"))) {
 					primo = false;
 					String valore = c.getValue(); //TODO: controllo se ho già comprato quel prodotto e ne aumento solo la quantita, serve il parser
 					List<Prodotto> prodottiPresenti = CookieParser.parseCookie(c);
@@ -109,7 +114,7 @@ public class GoToCarrello extends HttpServlet{
 						}
 					}
 					if(presente) {
-						Cookie coo = CookieParser.creaCookieByProdotti(prodottiPresenti);
+						Cookie coo = CookieParser.creaCookieByProdotti(prodottiPresenti, request);
 						coo.setMaxAge(3600);
 						response.addCookie(coo);
 					}else {
@@ -125,7 +130,7 @@ public class GoToCarrello extends HttpServlet{
 
 		if(primo) {
 			String idFor = request.getParameter("IdFor");
-			String nome = idFor;
+			String nome = ((Utente)s.getAttribute("utente")).getId() + "-" + idFor;
 			String valore = request.getParameter("IdProd") + "-" + request.getParameter("quantita");
 			Cookie coo = new Cookie(nome, valore);
 			coo.setMaxAge(3600);
