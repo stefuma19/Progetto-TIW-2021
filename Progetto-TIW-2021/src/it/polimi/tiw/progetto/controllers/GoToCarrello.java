@@ -23,6 +23,7 @@ import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 import com.mysql.cj.Session;
 
+import it.polimi.tiw.progetto.beans.Carrello;
 import it.polimi.tiw.progetto.beans.Prodotto;
 import it.polimi.tiw.progetto.beans.Utente;
 import it.polimi.tiw.progetto.dao.ProdottoDAO;
@@ -52,7 +53,7 @@ public class GoToCarrello extends HttpServlet{
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		
-		List<List<Prodotto>> daMostrare = new ArrayList<List<Prodotto>>();
+		List<Carrello> daMostrare = new ArrayList<Carrello>();
 		ProdottoDAO prodottoDAO = new ProdottoDAO(connection);
 		
 		if(request.getParameter("IdFor") != null) {
@@ -67,6 +68,8 @@ public class GoToCarrello extends HttpServlet{
 				if(!cookies[i].getName().equals("JSESSIONID")) {
 					if(cookies[i].getName().split("-")[0].equals(String.valueOf((((Utente)s.getAttribute("utente")).getId()))))
 					{
+						Carrello carrello = new Carrello();
+						carrello.setIdForn(Integer.parseInt(cookies[i].getName().split("-")[1]));
 						prodotti = CookieParser.parseCookie(cookies[i]);
 						for(Prodotto p : prodotti) {
 							try {
@@ -76,11 +79,14 @@ public class GoToCarrello extends HttpServlet{
 								return;
 							}
 						}
-						daMostrare.add(listaForn);
+						carrello.setProdotti(listaForn);
+						daMostrare.add(carrello);
 					}
 				}
 			}
 		}
+		
+		//TODO: per ogni carrello calcolo spesa totale e costo spedizione e setto nome forn
 		
 		String path = "/WEB-INF/carrello.html";
 		ServletContext servletContext = getServletContext();

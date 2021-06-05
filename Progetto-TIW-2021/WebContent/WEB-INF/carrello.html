@@ -32,8 +32,8 @@
 			<tr  th:each="f : ${fornitori}">
 				<td>
 					<table style="border: 1px solid black; width: 100%;">
-						<tr><td colspan="3"><span>Nome fornitore</span><br></td></tr>
-						<tr th:each="p : ${f}">
+						<tr><td colspan="3"><span th:text="${f.IdForn}"></span><br></td></tr>
+						<tr th:each="p : ${f.prodotti}">
 							<td style="width: 110px;">
 								<img th:src="@{'data:image/jpg;base64,'+${p.immagine}}" th:alt="${p.nome}" width="110" height="110" />
 							</td>
