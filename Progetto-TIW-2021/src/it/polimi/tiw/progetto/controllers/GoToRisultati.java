@@ -69,6 +69,23 @@ public class GoToRisultati extends HttpServlet{
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
 		
 		if(request.getParameter("idProdotto") != null) {
+			
+			boolean presente = false;
+			for(Prodotto p : prodotti) {
+				if(p.getID() == Integer.parseInt(request.getParameter("idProdotto"))) {
+					presente = true;
+					break;
+				}
+			}
+			
+			if(!presente) {
+				prodotti = new ArrayList<Prodotto>();
+				try {
+					prodotti.add(prodottoDAO.prendiProdottoById(Integer.parseInt(request.getParameter("idProdotto"))));
+				}catch(SQLException e) {
+					e.printStackTrace();
+				}
+			}
 			int idProdotto = Integer.parseInt(request.getParameter("idProdotto"));
 			Queue<Integer> listaVisualizzati = new LinkedList<>();
 			HttpSession session = request.getSession();
