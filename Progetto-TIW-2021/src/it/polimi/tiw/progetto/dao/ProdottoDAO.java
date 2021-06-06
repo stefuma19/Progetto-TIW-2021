@@ -141,20 +141,24 @@ public class ProdottoDAO {
 		
 		return prodotti;
 	}
+
 	
-	public Prodotto prendiOffertaByCookieInfo(Prodotto prodotto) throws SQLException{ 
-		
+	public Prodotto prendiProdottoByIdProdottoFornitore(int IdProdotto, int IdFornitore) throws SQLException{
 		FornitoreDAO fornitoreDAO = new FornitoreDAO(connection);
-		//TODO: tolgo info del fornitore
+		Prodotto prodotto = new Prodotto();
 		String query = "select * from prodotto pr, vendita v, fornitore f, politica po "
 				+ "where pr.Id=v.IdProdotto and v.IdFornitore=f.Id and po.Id=f.IdPoliticaForn and pr.Id = ? and f.Id= ? "
 				+ "order by Prezzo"; 
+
 		
 		try (PreparedStatement pstatement = connection.prepareStatement(query);) {
-			pstatement.setInt(1, prodotto.getID());
-			pstatement.setInt(2, prodotto.getFornitore().getID());
+			pstatement.setInt(1, IdProdotto);
+			pstatement.setInt(2, IdFornitore);
 			try (ResultSet result = pstatement.executeQuery();) {
 				while (result.next()) {
+
+					
+					prodotto.setID(IdProdotto);
 					prodotto.setNome(result.getString("Nome"));
 					prodotto.setDescrizione(result.getString("Descrizione"));
 					prodotto.setCategoria(result.getString("Categoria"));	

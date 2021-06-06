@@ -7,8 +7,8 @@ public class Ordine {
 	
 	private Integer id;
 	private Integer totale;
-	private String descrizione;
 	private List<Prodotto> prodotti;
+	private Fornitore fornitore;
 	private Date data;
 	private String indirizzo;
 	
@@ -23,12 +23,6 @@ public class Ordine {
 	}
 	public void setTotale(Integer totale) {
 		this.totale = totale;
-	}
-	public String getDescrizione() {
-		return descrizione;
-	}
-	public void setDescrizione(String descrizione) {
-		this.descrizione = descrizione;
 	}
 	public List<Prodotto> getProdotti() {
 		return prodotti;
@@ -47,6 +41,12 @@ public class Ordine {
 	}
 	public void setIndirizzo(String indirizzo) {
 		this.indirizzo = indirizzo;
+	}
+	public Fornitore getFornitore() {
+		return fornitore;
+	}
+	public void setFornitore(Fornitore fornitore) {
+		this.fornitore = fornitore;
 	}
 	
 	

@@ -84,7 +84,9 @@ public class GoToCarrello extends HttpServlet{
 							prodotti = CookieParser.parseCookie(cookies[i]);
 							for(Prodotto p : prodotti) {
 								try {
-									listaForn.add(prodottoDAO.prendiOffertaByCookieInfo(p));
+									Prodotto daAggiungere = prodottoDAO.prendiProdottoByIdProdottoFornitore(p.getID(),p.getFornitore().getID());
+									daAggiungere.setQuantita(p.getQuantita());
+									listaForn.add(daAggiungere);
 								} catch (SQLException e) {
 									response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile recuperare prodotti da cookie info");
 									return;
