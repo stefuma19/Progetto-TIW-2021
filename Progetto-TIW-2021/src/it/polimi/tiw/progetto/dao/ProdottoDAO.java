@@ -108,10 +108,9 @@ public class ProdottoDAO {
 	}
 	
 	public List<Prodotto> prendiOfferteByIdProdotto(int ID) throws SQLException{ 
-		//TODO: aggiungo valutazione, face, spediz gratuita, # prod nel carrelo e valore totale di questo fornitore. LB19
 		List<Prodotto> prodotti = new ArrayList<Prodotto>();
+		FornitoreDAO fornitoreDAO = new FornitoreDAO(connection);
 		
-		//TODO: query da cambiare? 
 		String query = "select * from prodotto pr, vendita v, fornitore f, politica po "
 				+ "where pr.Id=v.IdProdotto and v.IdFornitore=f.Id and po.Id=f.IdPoliticaForn and pr.Id = ? "
 				+ "order by Prezzo"; 
@@ -128,10 +127,9 @@ public class ProdottoDAO {
 					prodotto.setDescrizione(result.getString("Descrizione"));
 					prodotto.setCategoria(result.getString("Categoria"));	
 					prodotto.setPrezzo(result.getFloat("Prezzo"));
-					prodotto.getFornitore().setNome(result.getString("NomeFor"));
-					prodotto.getFornitore().setValutazione(result.getString("Valutazione"));
-					prodotto.getFornitore().setSoglia(result.getInt("Soglia"));
-					prodotto.getFornitore().setID(result.getInt("IdFornitore"));
+					
+					prodotto.setFornitore(fornitoreDAO.prendiFornitoreById(result.getInt("IdFornitore")));
+					
 					Blob immagineBlob= result.getBlob("Immagine");
 					byte[] byteData = immagineBlob.getBytes(1, (int) immagineBlob.length()); 
 					String immagine = new String(Base64.getEncoder().encode(byteData));					
@@ -139,22 +137,6 @@ public class ProdottoDAO {
 					prodotti.add(prodotto);
 				}
 			}
-		}
-		
-		for(Prodotto p : prodotti) {
-			List<Range> fasce = new ArrayList<Range>();
-			query = "select * from fornitore fo, politica po, fascia fa, composizione co "
-					+ "where po.Id=fo.IdPoliticaForn and fa.IdFascia=co.IdFasceComp and co.IdPoliticaComp=po.Id and fo.Id = ?"; 
-			try (PreparedStatement pstatement = connection.prepareStatement(query);) {
-				pstatement.setInt(1, p.getFornitore().getID());
-				try (ResultSet result = pstatement.executeQuery();) {
-					while (result.next()) {
-						Range fascia = new Range(result.getInt("IdFascia"),result.getInt("Min"),result.getInt("Max"),result.getInt("Prezzo"));
-						fasce.add(fascia);
-					}
-				}
-			}
-			p.getFornitore().setPolitica(fasce);
 		}
 		
 		return prodotti;
@@ -179,10 +161,7 @@ public class ProdottoDAO {
 					prodotto.setPrezzo(result.getFloat("Prezzo"));
 					
 					prodotto.setFornitore(fornitoreDAO.prendiFornitoreById(prodotto.getFornitore().getID()));
-					/*prodotto.getFornitore().setNome(result.getString("NomeFor"));
-					prodotto.getFornitore().setValutazione(result.getString("Valutazione"));
-					prodotto.getFornitore().setSoglia((result.getString("Soglia") == null) ? -1 : Integer.parseInt(result.getString("Soglia")));  
-					prodotto.getFornitore().setID(result.getInt("IdFornitore"));*/
+
 					Blob immagineBlob= result.getBlob("Immagine");
 					byte[] byteData = immagineBlob.getBytes(1, (int) immagineBlob.length()); 
 					String immagine = new String(Base64.getEncoder().encode(byteData));					
@@ -190,21 +169,6 @@ public class ProdottoDAO {
 				}
 			}
 		}
-		
-		List<Range> fasce = new ArrayList<Range>();
-		query = "select * from fornitore fo, politica po, fascia fa, composizione co "
-				+ "where po.Id=fo.IdPoliticaForn and fa.IdFascia=co.IdFasceComp and co.IdPoliticaComp=po.Id and fo.Id = ?"; 
-		try (PreparedStatement pstatement = connection.prepareStatement(query);) {
-			pstatement.setInt(1, prodotto.getFornitore().getID());
-			try (ResultSet result = pstatement.executeQuery();) {
-				while (result.next()) {
-					Range fascia = new Range(result.getInt("IdFascia"),result.getInt("Min"),result.getInt("Max"),result.getInt("Prezzo"));
-					fasce.add(fascia);
-				}
-			}
-		}
-		prodotto.getFornitore().setPolitica(fasce);
-		
 		
 		return prodotto;
 	}
