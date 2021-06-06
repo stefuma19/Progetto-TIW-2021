@@ -60,52 +60,55 @@ public class GoToCarrello extends HttpServlet{
 		FornitoreDAO fornitoreDAO = new FornitoreDAO(connection);
 		OrdineDAO ordineDAO = new OrdineDAO();
 		
-		if(request.getParameter("IdFor") != null) {
+		if(request.getParameter("IdFor") != null) {  //se devo inserire un nuovo prodotto
 			response = addCookie(request, response);
+			response.sendRedirect(getServletContext().getContextPath() + "/GoToCarrello");
 		}
-		HttpSession s = request.getSession(); 
-		Cookie[] cookies = request.getCookies();
-		List<Prodotto> prodotti = new ArrayList<>();
-		if (cookies != null) {
-			for (int i = 0; i < cookies.length; i++) { //TODO: x evitare il cookie JSESSIONID?
-				List<Prodotto> listaForn = new ArrayList<Prodotto>();
-				if(!cookies[i].getName().equals("JSESSIONID")) {
-					if(cookies[i].getName().split("-")[0].equals(String.valueOf((((Utente)s.getAttribute("utente")).getId()))))
-					{
-						Carrello carrello = new Carrello();
-						try {
-							carrello.setFornitore(fornitoreDAO.prendiFornitoreById(Integer.parseInt(cookies[i].getName().split("-")[1])));
-						} catch (SQLException e) {
-							response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile recuperare fornitore da cookie");
-							return;
-						}
-						prodotti = CookieParser.parseCookie(cookies[i]);
-						for(Prodotto p : prodotti) {
+		else { 										 //se devo solo visualizzare il carrello
+			HttpSession s = request.getSession(); 
+			Cookie[] cookies = request.getCookies();
+			List<Prodotto> prodotti = new ArrayList<>();
+			if (cookies != null) {
+				for (int i = 0; i < cookies.length; i++) { //TODO: x evitare il cookie JSESSIONID?
+					List<Prodotto> listaForn = new ArrayList<Prodotto>();
+					if(!cookies[i].getName().equals("JSESSIONID")) {
+						if(cookies[i].getName().split("-")[0].equals(String.valueOf((((Utente)s.getAttribute("utente")).getId()))))
+						{
+							Carrello carrello = new Carrello();
 							try {
-								listaForn.add(prodottoDAO.prendiOffertaByCookieInfo(p));
+								carrello.setFornitore(fornitoreDAO.prendiFornitoreById(Integer.parseInt(cookies[i].getName().split("-")[1])));
 							} catch (SQLException e) {
-								response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile recuperare prodotti da cookie info");
+								response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile recuperare fornitore da cookie");
 								return;
 							}
+							prodotti = CookieParser.parseCookie(cookies[i]);
+							for(Prodotto p : prodotti) {
+								try {
+									listaForn.add(prodottoDAO.prendiOffertaByCookieInfo(p));
+								} catch (SQLException e) {
+									response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile recuperare prodotti da cookie info");
+									return;
+								}
+							}
+							carrello.setProdotti(listaForn);
+							daMostrare.add(carrello);
 						}
-						carrello.setProdotti(listaForn);
-						daMostrare.add(carrello);
 					}
 				}
 			}
+		
+			for(Carrello c : daMostrare) {
+				c = ordineDAO.calcolaCosti(c); 
+			}
+			
+			//TODO: per ogni carrello calcolo spesa totale e costo spedizione e setto nome forn
+			
+			String path = "/WEB-INF/carrello.html";
+			ServletContext servletContext = getServletContext();
+			final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
+			ctx.setVariable("fornitori", daMostrare);
+			templateEngine.process(path, ctx, response.getWriter());
 		}
-		
-		for(Carrello c : daMostrare) {
-			c = ordineDAO.calcolaCosti(c); 
-		}
-		
-		//TODO: per ogni carrello calcolo spesa totale e costo spedizione e setto nome forn
-		
-		String path = "/WEB-INF/carrello.html";
-		ServletContext servletContext = getServletContext();
-		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-		ctx.setVariable("fornitori", daMostrare);
-		templateEngine.process(path, ctx, response.getWriter());
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -117,7 +120,9 @@ public class GoToCarrello extends HttpServlet{
 		boolean primo=true;  //se dobbiamo creare un cookie per il fornitore
 		Cookie[] cookies = request.getCookies();
 		HttpSession s = request.getSession(); 
-		if (cookies != null) {
+		if(Integer.parseInt(request.getParameter("quantita")) < 1){
+			return response;
+		}else if (cookies != null) {
 			for (int i = 0; i < cookies.length; i++) {
 				Cookie c = cookies[i];
 				String nome = c.getName();
