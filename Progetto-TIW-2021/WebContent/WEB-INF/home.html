@@ -11,14 +11,14 @@
 		Felice di vederti <span th:text="${session.utente.nome}">utente</span>
 		&emsp;<a href="Logout">Logout</a>
 	</div>
-	<div class = "barraMenu">
+	<div class="barraMenu">
 		<table>
 			<tr>
 				<td><a href="GoToHome">Home</a></td>
 				<td><a href="GoToCarrello">Carrello</a></td>
 				<td><a href="GoToOrdini">Ordini</a></td>
 				<td>
-					<form action="GoToRisultati" method="POST"> <!-- SI FA COSI'? -->
+					<form action="GoToRisultati" method="POST">
 						Inserisci una parola chiave per la ricerca nel catalogo: 
 						<input type="text" name="keyword">
 						<input type="submit" value="Cerca">
@@ -27,7 +27,7 @@
 			</tr>
 		</table>
 	</div>
-	<div class="prodottiRecenti">
+	<div>
 		<table class="tabellaCentrata">
 			<tr  th:each="p : ${prodotti}">
 				<td style="text-align: center; padding-right: 5px;">

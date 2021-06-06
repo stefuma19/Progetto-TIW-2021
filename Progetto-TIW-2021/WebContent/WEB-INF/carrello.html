@@ -27,12 +27,12 @@
 			</tr>
 		</table>	
 	</div>
-	<div class="prodottiCarrello">
+	<div>
 		<table class="tabellaCentrata">
 			<tr  th:each="f : ${fornitori}">
 				<td>
 					<table style="border: 1px solid black; width: 100%;">
-						<tr><td colspan="3"><span th:text="${f.fornitore.nome}"></span><br></td></tr>
+						<tr><td colspan="3"><span th:text="${f.fornitore.nome}"></span><br><br></td></tr>
 						<tr th:each="p : ${f.prodotti}">
 							<td style="width: 110px;">
 								<img th:src="@{'data:image/jpg;base64,'+${p.immagine}}" th:alt="${p.nome}" width="110" height="110" />
@@ -49,16 +49,26 @@
 						</tr>
 						<tr style="text-align: right;">
 							<td colspan="2"><span>Totale:</span></td>
-							<td><span th:text="${f.totaleCosto}"></span> &euro;</td>
+							<td><span th:text="${#numbers.formatDecimal(f.totaleCosto, 0, 'COMMA', 2, 'POINT')}"></span> &euro;</td>
 						</tr>
 						<tr style="text-align: right;">
 							<td colspan="2"><span>Spedizione:</span></td>
-							<td><span th:text="${f.costoSpedizione}"></span> &euro;</td>
+							<td><span th:text="${#numbers.formatDecimal(f.costoSpedizione, 0, 'COMMA', 2, 'POINT')}"></span> &euro;</td>
 						</tr>
-						<tr style="text-align: right;">
+						<tr>
 							<td colspan="3">
-								    <form th:action="@{/GoToOrdini(idForn=${f.fornitore.ID})}" method="POST"> <!-- SI FA COSI'? -->
-									<input type="submit" value="ORDINA">
+								<form th:action="@{/GoToOrdini(idForn=${f.fornitore.ID})}" method="POST">
+									<table style="width: 100%; text-align: right; margin-top: 10px;">
+										<tr><td>Città:</td><td style="width:30%;"><input type="text" name="citta" id="citta"></td></tr>
+										<tr><td>Via:</td><td><input type="text" name="via" id="via"></td></tr>
+										<tr><td>Numero:</td><td><input type="text" name="numero" id="numero"></td></tr>
+										<tr><td>CAP:</td><td><input type="text" name="cap" id="cap"></td></tr>
+										<tr>
+											<td colspan="2">
+												<input type="submit" value="ORDINA">
+											</td>
+										</tr>
+									</table>
 								</form>
 							</td>
 						</tr>

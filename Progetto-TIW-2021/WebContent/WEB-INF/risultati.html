@@ -18,7 +18,7 @@
 				<td><a href="GoToCarrello">Carrello</a></td>
 				<td><a href="GoToOrdini">Ordini</a></td>
 				<td>
-					<form action="GoToRisultati" method="POST"> <!-- SI FA COSI'? -->
+					<form action="GoToRisultati" method="POST">
 						Inserisci una parola chiave per la ricerca nel catalogo: 
 						<input type="text" name="keyword" id="keyword">
 						<input type="submit" value="Cerca">
@@ -27,30 +27,33 @@
 			</tr>
 		</table>	
 	</div>
-	<div class="prodottiRisultati">
-		<table class="tabellaCentrata" style="width: 990px;" th:each="p : ${prodotti}">
-			<tr>
-				<td style="text-align: center; padding-right: 5px; width: 150px;">
-					<img th:src="@{'data:image/jpg;base64,'+${p.immagine}}" th:alt="${p.nome}" width="150" height="150" />
-				</td>
-				<td valign="top">
-					<span th:text="${p.categoria}">Categoria</span><br><br>
-					<a th:href="@{/GoToRisultati(idProdotto=${p.ID})}">
-					<span th:text="${p.nome}">Nome prodotto</span></a> - 
-					<span th:text="${#numbers.formatDecimal(p.prezzo, 0, 'COMMA', 2, 'POINT')}">Prezzo</span> &euro;<br><br>
-					<span th:if="${p.id} == ${idDaMostrare}" th:text="${p.descrizione}">Descrizione</span>
-				</td> 
-			</tr>
-			<tr th:if="${p.id} == ${idDaMostrare}">
-				<td colspan="2" style="padding-left: 155px;">
-					<table>
-						<tr th:each="product : ${offerte}" th:insert="@{WEB-INF/fragment.html} :: product">
+	<div>
+		<table class="tabellaCentrata">
+			<tr th:each="p : ${prodotti}">
+				<td>
+					<table style="width: 100%;">
+						<tr>
+							<td style="text-align: center; padding-right: 5px; width: 150px;">
+								<img th:src="@{'data:image/jpg;base64,'+${p.immagine}}" th:alt="${p.nome}" width="150" height="150" />
+							</td>
+							<td valign="top">
+								<span th:text="${p.categoria}">Categoria</span><br><br>
+								<a th:href="@{/GoToRisultati(idProdotto=${p.ID})}">
+								<span th:text="${p.nome}">Nome prodotto</span></a> - 
+								<span th:text="${#numbers.formatDecimal(p.prezzo, 0, 'COMMA', 2, 'POINT')}">Prezzo</span> &euro;<br><br>
+								<span th:if="${p.id} == ${idDaMostrare}" th:text="${p.descrizione}">Descrizione</span>
+							</td> 
 						</tr>
+						<tr th:if="${p.id} == ${idDaMostrare}">
+							<td colspan="2" style="padding-left: 155px;">
+								<table><tr th:each="product : ${offerte}" th:insert="@{WEB-INF/fragment.html} :: product"></tr></table>
+							</td>
+						</tr>
+						<tr th:if="${prodotti.empty}"><td>La ricerca non ha prodotto risultati</td></tr>
 					</table>
 				</td>
 			</tr>
-		</table>
-		<span th:if="${prodotti.empty}">La ricerca non ha prodotto risultati</span>		
+		</table>	
 	</div>
 </body>
 </html>
