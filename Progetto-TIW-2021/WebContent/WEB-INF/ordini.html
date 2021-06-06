@@ -29,15 +29,14 @@
 	</div>
 	<div>
 		<table class="tabellaCentrata">
-			<tr> <!-- x ogni ordine memorizzato -->
+			<tr th:each="o : ${ordini}" > <!-- x ogni ordine memorizzato -->
 				<td>
 					<table style="border: 1px solid black; width: 100%;">
 						<tr>
 							<td colspan="3">
-								<span>NOME FORNITORE</span> - 
-								<span>DATA</span> - 
-								<span>TOTALE</span>
-								<!-- <span th:text="${#numbers.formatDecimal(f.totaleCosto, 0, 'COMMA', 2, 'POINT')}"></span> &euro;-->
+								<span th:text="${o.fornitore.nome}">fornitore</span> - 
+								<span th:text="${#dates.format(o.data, 'dd-MMM-yyyy')}">DATA</span> - 
+								<span th:text="${#numbers.formatDecimal(o.totale, 0, 'COMMA', 2, 'POINT')}"></span> &euro;
 							</td>
 						</tr>
 						<tr>
@@ -45,21 +44,10 @@
 								<span>INDIRIZZO</span>
 							</td>
 						</tr>
-						<tr><!-- x ogni prodotto -->
-							<td style="width: 110px;">
-								IMMAGINE
-								<!--<img th:src="@{'data:image/jpg;base64,'+${p.immagine}}" th:alt="${p.nome}" width="110" height="110" />  -->
-							</td>
-							<td>
-								INFO
-								<!--<span th:text="${p.categoria}">Categoria</span> - 
-								<a th:href="@{/GoToRisultati(idProdotto=${p.ID})}">
-								<span th:text="${p.nome}">Nome prodotto</span></a>  -->
-							</td>
+						<tr th:each="p : ${o.prodotti}"><!-- x ogni prodotto -->
 							<td style="text-align: right; width: 90px;">	
-								Q E PREZZO						
-								<!--x<span th:text="${p.quantita}">Quantità</span> 
-								<span th:text="${#numbers.formatDecimal(p.prezzo, 0, 'COMMA', 2, 'POINT')}">Prezzo</span> &euro;  -->
+								<span th:text="${p.nome}">Nome</span>   
+								<span th:text="${p.quantita}">Quantità</span>   
 							</td>
 						</tr>
 					</table>

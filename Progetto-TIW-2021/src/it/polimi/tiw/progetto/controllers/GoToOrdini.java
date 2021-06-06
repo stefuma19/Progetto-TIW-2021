@@ -2,6 +2,9 @@ package it.polimi.tiw.progetto.controllers;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -9,6 +12,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
@@ -16,6 +20,8 @@ import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 import it.polimi.tiw.progetto.utils.GestoreConnessione;
+import it.polimi.tiw.progetto.beans.*;
+import it.polimi.tiw.progetto.dao.OrdineDAO;
 
 @WebServlet("/GoToOrdini")
 public class GoToOrdini extends HttpServlet{
@@ -40,6 +46,8 @@ public class GoToOrdini extends HttpServlet{
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		
+		List<Ordine> ordiniDaMostrare = new ArrayList<Ordine>();
+		OrdineDAO ordineDAO = new OrdineDAO(connection);
 		
 		if(request.getParameter("IdFor") != null) {  //se devo inserire un nuovo prodotto
 			
@@ -47,13 +55,21 @@ public class GoToOrdini extends HttpServlet{
 			
 			response.sendRedirect(getServletContext().getContextPath() + "/GoToOrdini");
 		}
-		else { 
+		
 			//mostro tutti gli ordini presi dal db
+
+		HttpSession s = request.getSession(); 
+		try {
+			ordiniDaMostrare = ordineDAO.prendiOrdiniByIdUtente(((Utente)s.getAttribute("utente")).getId());
+		}catch(SQLException e) {
+			e.printStackTrace();
 		}
+		
 
 		String path = "/WEB-INF/ordini.html";
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
+		ctx.setVariable("ordini", ordiniDaMostrare);
 		templateEngine.process(path, ctx, response.getWriter());
 	}
 

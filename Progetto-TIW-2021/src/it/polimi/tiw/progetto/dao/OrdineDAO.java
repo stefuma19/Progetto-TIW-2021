@@ -50,16 +50,15 @@ public class OrdineDAO {
 		return carrello;
 	}
 	
-	public List<Ordine> prendiOrdiniByIdUtenteFornitore(int IdUtente, int IdForn) throws SQLException{  
+	public List<Ordine> prendiOrdiniByIdUtente(int IdUtente) throws SQLException{  
 		//TODO: testare
 		List<Ordine> ordini = new ArrayList<Ordine>();
 		List<Integer> idOrdini = new ArrayList<Integer>();
 		//prendo lista di id dei miei ordini e poi per ogni id prendo info prodotti ecc
-		String query = "select Id from ordine or where or.IdUtente = ? and or.IdFornitore = ?"; 
+		String query = "select Id from ordine ord where ord.IdUtente = ? "; 
 		
 		try (PreparedStatement pstatement = connection.prepareStatement(query);) {
 			pstatement.setInt(1, IdUtente);
-			pstatement.setInt(2, IdForn);
 			try (ResultSet result = pstatement.executeQuery();) {
 				if (result.next()) {
 					idOrdini.add(result.getInt("Id"));
@@ -71,27 +70,28 @@ public class OrdineDAO {
 		ProdottoDAO prodottoDAO = new ProdottoDAO(connection);
 		
 		for(Integer idOrdine : idOrdini) {
-			
-			query = "select * from ordine or join contenuto co on or.Id=co.IdOrdine where or.IdUtente = ? and or.IdFornitore = ? and or.Id= ? "; 
+
+			Ordine ordine = new Ordine();
+			query = "select * from ordine ord join contenuto co on ord.Id=co.IdOrdine where ord.Id= ? "; 
 			
 			try (PreparedStatement pstatement = connection.prepareStatement(query);) {
-				pstatement.setInt(1, IdUtente);
-				pstatement.setInt(2, IdForn);
-				pstatement.setInt(3, idOrdine);
+				pstatement.setInt(1, idOrdine);
 				try (ResultSet result = pstatement.executeQuery();) {
-					Ordine ordine = new Ordine();
 					List<Prodotto> prodotti = new ArrayList<>();
 					while (result.next()) {
-						prodotti.add(prodottoDAO.prendiProdottoByIdProdottoFornitore(Integer.parseInt(result.getString("IdProdotto")), 
-								Integer.parseInt(result.getString("IdFornitore"))));
+						Prodotto prodotto = prodottoDAO.prendiProdottoByIdProdottoFornitore(Integer.parseInt(result.getString("IdProdotto")), 
+								Integer.parseInt(result.getString("IdFornitore")));
+						prodotto.setQuantita(Integer.parseInt(result.getString("Quantita")));
+						prodotti.add(prodotto);
+
+						ordine.setData(result.getDate("Data"));
+						ordine.setFornitore(fornitoreDAO.prendiFornitoreById(Integer.parseInt(result.getString("IdFornitore"))));
 					}
 					ordine.setId(idOrdine);
 					ordine.setProdotti(prodotti);
-					ordine.setData(result.getDate("Data"));
-					ordine.setFornitore(fornitoreDAO.prendiFornitoreById(IdForn));
 				}
 			}
-			
+			ordini.add(ordine);
 			
 		}
 		return ordini;
