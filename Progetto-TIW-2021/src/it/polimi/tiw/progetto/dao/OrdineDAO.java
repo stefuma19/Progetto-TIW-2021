@@ -37,7 +37,7 @@ public class OrdineDAO {
 		List<Ordine> ordini = new ArrayList<Ordine>();
 		List<Integer> idOrdini = new ArrayList<Integer>();
 		//prendo lista di id dei miei ordini e poi per ogni id prendo info prodotti ecc
-		String query = "select Id from ordine ord where ord.IdUtente = ? "; 
+		String query = "select Id from ordine ord where ord.IdUtente = ?  order by Data desc"; 
 		
 		try (PreparedStatement pstatement = connection.prepareStatement(query);) {
 			pstatement.setInt(1, IdUtente);

@@ -29,25 +29,27 @@
 	</div>
 	<div>
 		<table class="tabellaCentrata">
-			<tr th:each="o : ${ordini}" > <!-- x ogni ordine memorizzato -->
+			<tr th:each="o : ${ordini}" >
 				<td>
-					<table style="border: 1px solid black; width: 100%;">
+					<table style="border: 1px solid black; width: 100%; font-size: 18px;">
 						<tr>
-							<td colspan="3">
-								<span th:text="${o.fornitore.nome}">fornitore</span> - 
-								<span th:text="${#dates.format(o.data, 'dd-MMM-yyyy')}">DATA</span> - 
-								<span th:text="${#numbers.formatDecimal(o.totale, 0, 'COMMA', 2, 'POINT')}"></span> &euro;
+							<td colspan="3" style="font-size: 20px;">
+								Acquisto effettuato in data <span th:text="${#dates.format(o.data, 'dd/MM/yyyy')}">data</span><br>
+								Presso il venditore <span th:text="${o.fornitore.nome}">fornitore</span> - 
+								Totale: <span th:text="${#numbers.formatDecimal(o.totale, 0, 'COMMA', 2, 'POINT')}"></span> &euro;
 							</td>
 						</tr>
 						<tr>
 							<td colspan="3">
-								Via <span th:text="${o.indirizzo.via}"></span>&nbsp;<span th:text="${o.indirizzo.numero}"></span>,&nbsp;<span th:text="${o.indirizzo.citta}"></span>,&nbsp;<span th:text="${o.indirizzo.cap}"></span>
+								<br>Con indirizzo di spedizione:<br>
+								Via <span th:text="${o.indirizzo.via}"></span>&nbsp;<span th:text="${o.indirizzo.numero}"></span>,&nbsp;
+								<span th:text="${o.indirizzo.citta}"></span>,&nbsp;<span th:text="${o.indirizzo.cap}"></span>
 							</td>
 						</tr>
-						<tr th:each="p : ${o.prodotti}"><!-- x ogni prodotto -->
-							<td style="text-align: right; width: 90px;">	
-								<span th:text="${p.nome}">Nome</span>   
-								<span th:text="${p.quantita}">Quantità</span>   
+						<tr><td><br>Lista dei prodotti acquistati:</td></tr>
+						<tr th:each="p : ${o.prodotti}">
+							<td>	
+								&#9679; <span th:text="${p.nome}">Nome</span>&emsp;x <span th:text="${p.quantita}">Quantità</span>   
 							</td>
 						</tr>
 					</table>

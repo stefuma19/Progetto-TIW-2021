@@ -39,6 +39,7 @@
 							<td valign="top">
 								<span th:text="${p.categoria}">Categoria</span><br><br>
 								<a th:href="@{/GoToRisultati(idProdotto=${p.ID})}">
+								<span th:text="${p.ID}">codice</span> -
 								<span th:text="${p.nome}">Nome prodotto</span></a> - 
 								<span th:text="${#numbers.formatDecimal(p.prezzo, 0, 'COMMA', 2, 'POINT')}">Prezzo</span> &euro;<br><br>
 								<span th:if="${p.id} == ${idDaMostrare}" th:text="${p.descrizione}">Descrizione</span>
@@ -49,10 +50,10 @@
 								<table><tr th:each="product : ${offerte}" th:insert="@{WEB-INF/fragment.html} :: product"></tr></table>
 							</td>
 						</tr>
-						<tr th:if="${prodotti.empty}"><td>La ricerca non ha prodotto risultati</td></tr>
 					</table>
 				</td>
 			</tr>
+			<tr th:if="${prodotti.empty}"><td>La ricerca non ha prodotto risultati</td></tr>
 		</table>	
 	</div>
 </body>
