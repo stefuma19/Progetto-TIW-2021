@@ -43,7 +43,6 @@ public class CookieParser {
 				{
 					if(cookies[i].getName().split("-")[1].equals(String.valueOf(idForn))) {
 						prodottiCarrello = CookieParser.parseCookie(cookies[i]);
-						
 						}
 					}
 				}

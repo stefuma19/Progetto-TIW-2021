@@ -9,6 +9,7 @@ import java.util.List;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -58,7 +59,7 @@ public class GoToOrdini extends HttpServlet{
 		IndirizzoDAO indirizzoDAO= new IndirizzoDAO(connection);
 		HttpSession s = request.getSession(); 
 		
-		if(request.getParameter("idForn") != null) {  //se devo inserire un nuovo prodotto
+		if(request.getParameter("idForn") != null) {  //se devo inserire un nuovo ordine
 			
 			
 			int idFor = Integer.parseInt(request.getParameter("idForn"));
@@ -67,7 +68,10 @@ public class GoToOrdini extends HttpServlet{
 			float totale = -1;
 			int idInd = -1;
 			
-			List<Prodotto> prodotti = CookieParser.prendiProdottiByIdFornitoreUtente(idUtente,idFor,request.getCookies());
+			List<Prodotto> prodotti = CookieParser.prendiProdottiByIdFornitoreUtente(idUtente,idFor,request.getCookies()); //prendo info da cookie
+			Cookie c = new Cookie(String.valueOf(idUtente) + "-" + String.valueOf(idFor),"");
+			c.setMaxAge(0);
+			response.addCookie(c);
 			for(Prodotto p : prodotti) {
 				try {
 					Prodotto daAggiungere = prodottoDAO.prendiProdottoByIdProdottoFornitore(p.getID(),p.getFornitore().getID());
