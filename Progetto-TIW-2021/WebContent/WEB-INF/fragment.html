@@ -20,7 +20,6 @@
 				  <p th:case="-1">La soglia per la spedizione gratis non è presente</p>
 				  <p th:case="*">La soglia per la spedizione gratis è di: <span th:text="${#numbers.formatDecimal(product.fornitore.soglia, 0, 'COMMA', 2, 'POINT')}">Soglia</span>&euro;</p> 
 				</div>
-				  
 				  <br><br>
 				  Numero di prodotti già nel carrello: <span th:text="${product.quantita}"></span><br>
 				  Valore dei prodotti già nel carrello: <span th:text="${product.valore}"></span><br><br><br>
@@ -29,7 +28,7 @@
 			  			<input type="hidden" name="IdProd" th:value="${product.ID}"> 
 						<input type="number" name="quantita" id="quantita" min="1" style="width: 55px">
 						<input type="submit" value="Inserisci">
-				  </form>		  
+				  </form>
 			  </td>
 		</tr>
 	</table>

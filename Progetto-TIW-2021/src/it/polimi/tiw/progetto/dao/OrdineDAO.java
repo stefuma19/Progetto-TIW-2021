@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -40,7 +41,7 @@ public class OrdineDAO {
 		try (PreparedStatement pstatement = connection.prepareStatement(query);) {
 			pstatement.setInt(1, IdUtente);
 			try (ResultSet result = pstatement.executeQuery();) {
-				if (result.next()) {
+				while (result.next()) {
 					idOrdini.add(result.getInt("Id"));
 				}
 			}
@@ -76,6 +77,48 @@ public class OrdineDAO {
 			
 		}
 		return ordini;
+	}
+	
+	
+	public void aggiungiOrdine(float totale, int idIndirizzo, int idUtente, int idFornitore, List<Prodotto> prodotti) throws SQLException{
+		
+		int idOrdineNuovo = prendiProssimoId();
+		
+		String query = "INSERT INTO ordine (Id, Totale, Data, IdIndirizzo, IdUtente, IdFornitore) VALUES( ? , ? , ? , ? , ? , ? ) ";
+		
+		try (PreparedStatement pstatement = connection.prepareStatement(query);) {
+			pstatement.setInt(1, idOrdineNuovo);
+			pstatement.setFloat(2, totale);
+			pstatement.setDate(3, null);
+			pstatement.setInt(4, idIndirizzo);
+			pstatement.setInt(5, idUtente);
+			pstatement.setInt(6, idFornitore);
+			pstatement.executeUpdate(); 
+				
+			for(Prodotto p : prodotti) {
+				query = "INSERT INTO contenuto (IdOrdine, IdProdotto, Quantita) VALUES( ? , ? , ? ) ";
+				try (PreparedStatement pstatement2 = connection.prepareStatement(query);) {
+					pstatement2.setInt(1, idOrdineNuovo);
+					pstatement2.setInt(2, p.getID());
+					pstatement2.setInt(3, p.getQuantita());
+					pstatement2.executeUpdate();
+				}
+			}
+		}
+	}
+	
+	
+	public int prendiProssimoId() throws SQLException{ //per scegliere nuovo id per l'ordine
+		String query = "select max(Id) as Id from ordine "; 
+		
+		try (PreparedStatement pstatement = connection.prepareStatement(query);) {
+			try (ResultSet result = pstatement.executeQuery();) {
+				if (result.next()) {
+					return result.getInt("Id")+1;
+				}
+			}
+		}
+		return -1;
 	}
 	
 }

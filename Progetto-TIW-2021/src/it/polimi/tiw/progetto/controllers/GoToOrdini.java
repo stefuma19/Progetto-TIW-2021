@@ -19,9 +19,14 @@ import org.thymeleaf.context.WebContext;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
+import it.polimi.tiw.progetto.utils.CalcoloCosti;
+import it.polimi.tiw.progetto.utils.CookieParser;
 import it.polimi.tiw.progetto.utils.GestoreConnessione;
 import it.polimi.tiw.progetto.beans.*;
+import it.polimi.tiw.progetto.dao.FornitoreDAO;
+import it.polimi.tiw.progetto.dao.IndirizzoDAO;
 import it.polimi.tiw.progetto.dao.OrdineDAO;
+import it.polimi.tiw.progetto.dao.ProdottoDAO;
 
 @WebServlet("/GoToOrdini")
 public class GoToOrdini extends HttpServlet{
@@ -48,9 +53,50 @@ public class GoToOrdini extends HttpServlet{
 		
 		List<Ordine> ordiniDaMostrare = new ArrayList<Ordine>();
 		OrdineDAO ordineDAO = new OrdineDAO(connection);
+		ProdottoDAO prodottoDAO= new ProdottoDAO(connection);
+		FornitoreDAO fornitoreDAO= new FornitoreDAO(connection);
+		IndirizzoDAO indirizzoDAO= new IndirizzoDAO(connection);
+		HttpSession s = request.getSession(); 
 		
-		if(request.getParameter("IdFor") != null) {  //se devo inserire un nuovo prodotto
+		if(request.getParameter("idForn") != null) {  //se devo inserire un nuovo prodotto
 			
+			
+			int idFor = Integer.parseInt(request.getParameter("idForn"));
+			int idUtente = (((Utente)s.getAttribute("utente")).getId());
+			List<Prodotto> mieiProdotti = new ArrayList<Prodotto>();
+			float totale = -1;
+			int idInd = -1;
+			
+			List<Prodotto> prodotti = CookieParser.prendiProdottiByIdFornitoreUtente(idUtente,idFor,request.getCookies());
+			for(Prodotto p : prodotti) {
+				try {
+					Prodotto daAggiungere = prodottoDAO.prendiProdottoByIdProdottoFornitore(p.getID(),p.getFornitore().getID());
+					daAggiungere.setQuantita(p.getQuantita());
+					mieiProdotti.add(daAggiungere);
+				} catch (SQLException e) {
+					response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile recuperare prodotti da id prodotto e id fornitore");
+					return;
+				}
+			}
+			try {
+				totale = CalcoloCosti.calcolaTotale(mieiProdotti, fornitoreDAO.prendiFornitoreById(idFor));
+			}catch (SQLException e) {
+				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile recuperare fornitore da ID");
+				return;
+			}
+			
+			try {
+				idInd = indirizzoDAO.prendiIdIndirizzoByParam(request.getParameter("citta"), request.getParameter("via"), request.getParameter("cap"), Integer.parseInt(request.getParameter("numero")));
+			}catch (SQLException e) {
+				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile recuperare valore indirizzo");
+				return;
+			}
+			try {
+				ordineDAO.aggiungiOrdine(totale, idInd, idUtente, idFor, mieiProdotti);
+			}catch (SQLException e) {
+				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile aggiungere ordine");
+				return;
+			}
 			//aggiungo ordine e invio redirect
 			
 			response.sendRedirect(getServletContext().getContextPath() + "/GoToOrdini");
@@ -58,10 +104,10 @@ public class GoToOrdini extends HttpServlet{
 		
 			//mostro tutti gli ordini presi dal db
 
-		HttpSession s = request.getSession(); 
 		try {
 			ordiniDaMostrare = ordineDAO.prendiOrdiniByIdUtente(((Utente)s.getAttribute("utente")).getId());
 		}catch(SQLException e) {
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile prendere ordine by id utente");
 			e.printStackTrace();
 		}
 		

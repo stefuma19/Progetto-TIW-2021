@@ -62,7 +62,7 @@ public class GoToRisultati extends HttpServlet{
 		
 		if(request.getParameter("keyword") != null) {
 			try {
-				prodotti = prodottoDAO.prendiProdottiCercati(request.getParameter("keyword"));
+				prodotti = prodottoDAO.prendiProdottiByKeyword(request.getParameter("keyword"));
 			} catch (SQLException e) {
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile recuperare prodotti da keyword");
 				return;

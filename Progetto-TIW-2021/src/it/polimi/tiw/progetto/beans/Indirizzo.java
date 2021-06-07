@@ -7,6 +7,8 @@ public class Indirizzo {
 	private String cap;
 	private int numero;
 	
+	public Indirizzo() {
+	}
 	public Indirizzo(int id, String citta, String via, String cap, int numero) {
 		super();
 		this.id = id;

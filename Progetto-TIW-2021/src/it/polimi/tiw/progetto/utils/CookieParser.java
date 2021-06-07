@@ -1,10 +1,12 @@
 package it.polimi.tiw.progetto.utils;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import it.polimi.tiw.progetto.beans.Prodotto;
@@ -26,6 +28,25 @@ public class CookieParser {
 				p.setQuantita(Integer.parseInt(info[1]));
 				p.getFornitore().setID(Integer.parseInt(idForn));
 				prodottiCarrello.add(p);
+			}
+		}
+		return prodottiCarrello;
+	}
+	
+	public static List<Prodotto> prendiProdottiByIdFornitoreUtente(int idUtente, int idForn, Cookie[] cookies){
+		List<Prodotto> prodottiCarrello = new ArrayList<Prodotto>();
+			
+		if (cookies != null) {
+		for (int i = 0; i < cookies.length; i++) { //TODO: x evitare il cookie JSESSIONID?
+			if(!cookies[i].getName().equals("JSESSIONID")) {
+				if(cookies[i].getName().split("-")[0].equals(String.valueOf(idUtente)))
+				{
+					if(cookies[i].getName().split("-")[1].equals(String.valueOf(idForn))) {
+						prodottiCarrello = CookieParser.parseCookie(cookies[i]);
+						
+						}
+					}
+				}
 			}
 		}
 		return prodottiCarrello;

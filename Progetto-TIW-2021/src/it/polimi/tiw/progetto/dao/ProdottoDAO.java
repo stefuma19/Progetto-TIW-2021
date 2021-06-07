@@ -77,7 +77,7 @@ public class ProdottoDAO {
 		return prodotti;
 	}
 	
-	public List<Prodotto> prendiProdottiCercati(String parolaChiave) throws SQLException{
+	public List<Prodotto> prendiProdottiByKeyword(String parolaChiave) throws SQLException{
 		List<Prodotto> prodotti = new ArrayList<Prodotto>();
 		String parametro = "%"+parolaChiave+"%";
 		//TODO: query da cambiare? 
