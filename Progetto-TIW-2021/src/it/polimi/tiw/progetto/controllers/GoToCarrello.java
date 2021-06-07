@@ -104,7 +104,6 @@ public class GoToCarrello extends HttpServlet{
 				c.setTotaleCosto(CalcoloCosti.calcolaPrezzo(c.getProdotti()));
 			}
 			
-			//TODO: per ogni carrello calcolo spesa totale e costo spedizione e setto nome forn
 			
 			String path = "/WEB-INF/carrello.html";
 			ServletContext servletContext = getServletContext();

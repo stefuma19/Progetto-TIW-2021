@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -86,15 +87,16 @@ public class OrdineDAO {
 		
 		int idOrdineNuovo = prendiProssimoId();
 		
-		String query = "INSERT INTO ordine (Id, Totale, Data, IdIndirizzo, IdUtente, IdFornitore) VALUES( ? , ? , ? , ? , ? , ? ) ";
+		String query = "INSERT INTO ordine (Id, Totale, Data, IdIndirizzo, IdUtente, IdFornitore) VALUES( ? , ? , CURDATE() , ? , ? , ? ) ";
 		
 		try (PreparedStatement pstatement = connection.prepareStatement(query);) {
+			
+
 			pstatement.setInt(1, idOrdineNuovo);
 			pstatement.setFloat(2, totale);
-			pstatement.setDate(3, null);
-			pstatement.setInt(4, idIndirizzo);
-			pstatement.setInt(5, idUtente);
-			pstatement.setInt(6, idFornitore);
+			pstatement.setInt(3, idIndirizzo);
+			pstatement.setInt(4, idUtente);
+			pstatement.setInt(5, idFornitore);
 			pstatement.executeUpdate(); 
 				
 			for(Prodotto p : prodotti) {
