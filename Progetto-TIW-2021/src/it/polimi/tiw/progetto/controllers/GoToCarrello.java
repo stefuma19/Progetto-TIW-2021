@@ -29,6 +29,7 @@ import it.polimi.tiw.progetto.beans.Utente;
 import it.polimi.tiw.progetto.dao.FornitoreDAO;
 import it.polimi.tiw.progetto.dao.OrdineDAO;
 import it.polimi.tiw.progetto.dao.ProdottoDAO;
+import it.polimi.tiw.progetto.utils.CalcoloCosti;
 import it.polimi.tiw.progetto.utils.CookieParser;
 import it.polimi.tiw.progetto.utils.GestoreConnessione;
 
@@ -58,7 +59,6 @@ public class GoToCarrello extends HttpServlet{
 		List<Carrello> daMostrare = new ArrayList<Carrello>();
 		ProdottoDAO prodottoDAO = new ProdottoDAO(connection);
 		FornitoreDAO fornitoreDAO = new FornitoreDAO(connection);
-		OrdineDAO ordineDAO = new OrdineDAO();
 		
 		if(request.getParameter("IdFor") != null) {  //se devo inserire un nuovo prodotto
 			response = addCookie(request, response);
@@ -98,9 +98,10 @@ public class GoToCarrello extends HttpServlet{
 					}
 				}
 			}
-		
+			
 			for(Carrello c : daMostrare) {
-				c = ordineDAO.calcolaCosti(c); 
+				c.setCostoSpedizione(CalcoloCosti.calcolaCostiSpedizione(c.getProdotti(), c.getFornitore()));
+				c.setTotaleCosto(CalcoloCosti.calcolaPrezzo(c.getProdotti()));
 			}
 			
 			//TODO: per ogni carrello calcolo spesa totale e costo spedizione e setto nome forn

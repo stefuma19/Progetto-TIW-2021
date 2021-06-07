@@ -13,7 +13,7 @@ import it.polimi.tiw.progetto.beans.Utente;
 public class CookieParser {
 
 	public static List<Prodotto> parseCookie(Cookie cookie){
-		List<Prodotto> carrello = new ArrayList<Prodotto>();
+		List<Prodotto> prodottiCarrello = new ArrayList<Prodotto>();
 	
 		if (cookie != null) {
 			String idForn = cookie.getName().split("-")[1];
@@ -25,10 +25,10 @@ public class CookieParser {
 				p.setID(Integer.parseInt(info[0]));
 				p.setQuantita(Integer.parseInt(info[1]));
 				p.getFornitore().setID(Integer.parseInt(idForn));
-				carrello.add(p);
+				prodottiCarrello.add(p);
 			}
 		}
-		return carrello;
+		return prodottiCarrello;
 	}
 	
 	public static Cookie creaCookieByProdotti(List<Prodotto> prodotti, HttpServletRequest req) {

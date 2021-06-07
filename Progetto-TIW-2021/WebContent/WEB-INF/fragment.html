@@ -16,9 +16,14 @@
 				 # massimo prodotti: <span th:text="${fascia.Max}"></span> - Spedizione: <span th:text="${fascia.Prezzo}"></span>&euro;</p>
 			  </td>
 			  <td valign="top">
-				  La soglia per la spedizione gratis è di: 
-				  <span th:text="${#numbers.formatDecimal(product.fornitore.soglia, 0, 'COMMA', 2, 'POINT')}">Soglia</span>&euro;<br><br>
-				  Numero di prodotti già nel carrello: <span>mettere th</span><br><br><br>
+			  	<div th:switch="${product.fornitore.soglia}"> 
+				  <p th:case="-1">La soglia per la spedizione gratis non è presente</p>
+				  <p th:case="*">La soglia per la spedizione gratis è di: <span th:text="${#numbers.formatDecimal(product.fornitore.soglia, 0, 'COMMA', 2, 'POINT')}">Soglia</span>&euro;</p> 
+				</div>
+				  
+				  <br><br>
+				  Numero di prodotti già nel carrello: <span th:text="${product.quantita}"></span><br>
+				  Valore dei prodotti già nel carrello: <span th:text="${product.valore}"></span><br><br><br>
 				  <form action="GoToCarrello" method="POST" style="text-align: center;"> 
 			  			<input type="hidden" name="IdFor" th:value="${product.fornitore.ID}"> 
 			  			<input type="hidden" name="IdProd" th:value="${product.ID}"> 

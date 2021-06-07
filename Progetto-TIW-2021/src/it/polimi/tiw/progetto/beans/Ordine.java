@@ -6,7 +6,7 @@ import java.util.List;
 public class Ordine {
 	
 	private Integer id;
-	private Integer totale;
+	private float totale;
 	private List<Prodotto> prodotti;
 	private Fornitore fornitore;
 	private Date data;
@@ -18,10 +18,10 @@ public class Ordine {
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	public Integer getTotale() {
+	public float getTotale() {
 		return totale;
 	}
-	public void setTotale(Integer totale) {
+	public void setTotale(float totale) {
 		this.totale = totale;
 	}
 	public List<Prodotto> getProdotti() {

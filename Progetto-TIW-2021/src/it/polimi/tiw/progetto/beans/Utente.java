@@ -6,7 +6,7 @@ public class Utente {
 	private String email;
 	private String nome;
 	private String cognome;
-	private String indirizzo; //TODO: come string?
+	private Indirizzo indirizzo; 
 	
 	public int getId() {
 		return id;
@@ -40,11 +40,11 @@ public class Utente {
 		this.cognome = cognome;
 	}
 	
-	public String getIndirizzo() {
+	public Indirizzo getIndirizzo() {
 		return indirizzo;
 	}
 	
-	public void setIndirizzo(String indirizzo) {
+	public void setIndirizzo(Indirizzo indirizzo) {
 		this.indirizzo = indirizzo;
 	}
 }

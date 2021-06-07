@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import it.polimi.tiw.progetto.beans.Indirizzo;
 import it.polimi.tiw.progetto.beans.Utente;
 
 public class UtenteDAO {
@@ -15,7 +16,7 @@ public class UtenteDAO {
 	}
 
 	public Utente controllaCredenziali(String email, String psw) throws SQLException {
-		String query = "SELECT  id, nome, cognome FROM utente  WHERE email = ? AND password =?";
+		String query = "SELECT  * FROM utente u join indirizzo ind on ind.Id=u.IdIndirizzo WHERE email = ? AND password =?";
 		try (PreparedStatement pstatement = con.prepareStatement(query);) {
 			pstatement.setString(1, email);
 			pstatement.setString(2, psw);
@@ -25,9 +26,14 @@ public class UtenteDAO {
 				else {
 					result.next();
 					Utente utente = new Utente();
-					utente.setId(result.getInt("id"));
-					utente.setNome(result.getString("nome"));
-					utente.setCognome(result.getString("cognome"));
+					utente.setId(result.getInt("IdUtente"));
+					utente.setNome(result.getString("Nome"));
+					utente.setCognome(result.getString("Cognome"));
+					utente.setIndirizzo(new Indirizzo(result.getInt("IdIndirizzo"),
+													  result.getString("Citta"),
+													  result.getString("Via"),
+													  result.getString("Cap"),
+													  result.getInt("Numero")));
 					return utente;
 				}
 			}

@@ -11,6 +11,7 @@ import java.util.Queue;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,8 +22,12 @@ import org.thymeleaf.context.WebContext;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
+import it.polimi.tiw.progetto.beans.Carrello;
 import it.polimi.tiw.progetto.beans.Prodotto;
+import it.polimi.tiw.progetto.beans.Utente;
 import it.polimi.tiw.progetto.dao.ProdottoDAO;
+import it.polimi.tiw.progetto.utils.CalcoloCosti;
+import it.polimi.tiw.progetto.utils.CookieParser;
 import it.polimi.tiw.progetto.utils.GestoreConnessione;
 
 @WebServlet("/GoToRisultati")
@@ -110,8 +115,43 @@ public class GoToRisultati extends HttpServlet{
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile recuperare prodotti da id");
 				return;
 			}
+			
+			HttpSession s = request.getSession(); 
+			Cookie[] cookies = request.getCookies();
+			List<Prodotto> prodotti = new ArrayList<Prodotto>();
+			List<Prodotto> mieiProdotti = new ArrayList<Prodotto>();
+			for(Prodotto o : offerte) {
+				int idForn = o.getFornitore().getID();
+				
+				if (cookies != null) {
+					for (int i = 0; i < cookies.length; i++) { //TODO: x evitare il cookie JSESSIONID?
+						if(!cookies[i].getName().equals("JSESSIONID")) {
+							if(cookies[i].getName().split("-")[0].equals(String.valueOf((((Utente)s.getAttribute("utente")).getId()))))
+							{
+								if(cookies[i].getName().split("-")[1].equals(String.valueOf(idForn))) {
+									mieiProdotti = new ArrayList<Prodotto>();
+									prodotti = CookieParser.parseCookie(cookies[i]);
+									for(Prodotto p : prodotti) {
+										try {
+											Prodotto daAggiungere = prodottoDAO.prendiProdottoByIdProdottoFornitore(p.getID(),p.getFornitore().getID());
+											daAggiungere.setQuantita(p.getQuantita());
+											mieiProdotti.add(daAggiungere);
+										} catch (SQLException e) {
+											response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile recuperare prodotti da cookie info");
+											return;
+										}
+									}
+								}
+							}
+						}
+						float valore = CalcoloCosti.calcolaPrezzo(mieiProdotti);
+						int qta = CalcoloCosti.calcolaNumeroProdotti(mieiProdotti);
+						o.setValore(valore);
+						o.setQuantita(qta);
+					}
+				}
+			}
 		}
-		
 		ctx.setVariable("offerte", offerte);
 		ctx.setVariable("prodotti", prodotti);
 		templateEngine.process(path, ctx, response.getWriter());

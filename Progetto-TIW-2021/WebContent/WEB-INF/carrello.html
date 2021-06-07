@@ -59,10 +59,10 @@
 							<td colspan="3">
 								<form th:action="@{/GoToOrdini(idForn=${f.fornitore.ID})}" method="POST">
 									<table style="width: 100%; text-align: right; margin-top: 10px;">
-										<tr><td>Città:</td><td style="width:30%;"><input type="text" name="citta" id="citta"></td></tr>
-										<tr><td>Via:</td><td><input type="text" name="via" id="via"></td></tr>
-										<tr><td>Numero:</td><td><input type="text" name="numero" id="numero"></td></tr>
-										<tr><td>CAP:</td><td><input type="text" name="cap" id="cap"></td></tr>
+										<tr><td>Città:</td><td style="width:30%;"><input type="text" name="citta" th:value="${session.utente.indirizzo.citta}" id="citta"></td></tr>
+										<tr><td>Via:</td><td><input type="text" name="via" th:value="${session.utente.indirizzo.via}" id="via"></td></tr>
+										<tr><td>Numero:</td><td><input type="text" name="numero" th:value="${session.utente.indirizzo.numero}" id="numero"></td></tr>
+										<tr><td>CAP:</td><td><input type="text" name="cap" th:value="${session.utente.indirizzo.cap}" id="cap"></td></tr>
 										<tr>
 											<td colspan="2">
 												<input type="submit" value="ORDINA">

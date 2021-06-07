@@ -12,9 +12,11 @@ import java.util.Date;
 import java.util.List;
 
 import it.polimi.tiw.progetto.beans.Carrello;
+import it.polimi.tiw.progetto.beans.Fornitore;
 import it.polimi.tiw.progetto.beans.Ordine;
 import it.polimi.tiw.progetto.beans.Prodotto;
 import it.polimi.tiw.progetto.beans.Range;
+import it.polimi.tiw.progetto.utils.CalcoloCosti;
 
 public class OrdineDAO {
 	private Connection connection;
@@ -27,28 +29,6 @@ public class OrdineDAO {
 		
 	}
 	
-	public Carrello calcolaCosti(Carrello carrello){
-		
-		float totale = 0;
-		int numeroProdotti = 0;
-		for(Prodotto p : carrello.getProdotti()) {
-			totale += (p.getPrezzo() * p.getQuantita());
-			numeroProdotti += p.getQuantita();
-		}
-		carrello.setTotaleCosto(totale);
-		if(carrello.getFornitore().getSoglia() != -1 && totale > carrello.getFornitore().getSoglia()) {
-			carrello.setCostoSpedizione(0);
-		}else {
-			for(Range range : carrello.getFornitore().getPolitica()) {
-				if((range.getMin() <= numeroProdotti && range.getMax() >= numeroProdotti) || (range.getMin() <= numeroProdotti && range.getMax() == -1) ) {
-					carrello.setCostoSpedizione(range.getPrezzo());
-					break;
-				}
-			}
-		}
-		
-		return carrello;
-	}
 	
 	public List<Ordine> prendiOrdiniByIdUtente(int IdUtente) throws SQLException{  
 		//TODO: testare
@@ -89,6 +69,7 @@ public class OrdineDAO {
 					}
 					ordine.setId(idOrdine);
 					ordine.setProdotti(prodotti);
+					ordine.setTotale(CalcoloCosti.calcolaTotale(prodotti, ordine.getFornitore()));
 				}
 			}
 			ordini.add(ordine);

@@ -9,7 +9,8 @@ public class Prodotto {
 	private String immagine;
 	private Fornitore fornitore;
 	private Float prezzo;
-	private Integer quantita;
+	private Integer quantita;     //in risultati indica n.ro totale di prodotti del fornitore nel carrello
+	private float valore;         //per visualizzare valore totale prodotti in risultati
 	
 	public Prodotto() {
 		fornitore = new Fornitore();
@@ -62,6 +63,14 @@ public class Prodotto {
 	}
 	public void setQuantita(Integer quantita) {
 		this.quantita = quantita;
+	}
+
+	public float getValore() {
+		return valore;
+	}
+
+	public void setValore(float valore) {
+		this.valore = valore;
 	}
 	
 	
