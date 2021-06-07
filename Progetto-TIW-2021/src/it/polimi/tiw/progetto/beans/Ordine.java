@@ -10,7 +10,7 @@ public class Ordine {
 	private List<Prodotto> prodotti;
 	private Fornitore fornitore;
 	private Date data;
-	private String indirizzo;
+	private Indirizzo indirizzo;
 	
 	public Integer getId() {
 		return id;
@@ -36,10 +36,10 @@ public class Ordine {
 	public void setData(Date data) {
 		this.data = data;
 	}
-	public String getIndirizzo() {
+	public Indirizzo getIndirizzo() {
 		return indirizzo;
 	}
-	public void setIndirizzo(String indirizzo) {
+	public void setIndirizzo(Indirizzo indirizzo) {
 		this.indirizzo = indirizzo;
 	}
 	public Fornitore getFornitore() {

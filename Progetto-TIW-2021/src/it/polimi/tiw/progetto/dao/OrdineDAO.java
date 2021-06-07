@@ -49,6 +49,7 @@ public class OrdineDAO {
 
 		FornitoreDAO fornitoreDAO = new FornitoreDAO(connection);
 		ProdottoDAO prodottoDAO = new ProdottoDAO(connection);
+		IndirizzoDAO indirizzoDAO = new IndirizzoDAO(connection);
 		
 		for(Integer idOrdine : idOrdini) {
 
@@ -67,6 +68,7 @@ public class OrdineDAO {
 
 						ordine.setData(result.getDate("Data"));
 						ordine.setFornitore(fornitoreDAO.prendiFornitoreById(Integer.parseInt(result.getString("IdFornitore"))));
+						ordine.setIndirizzo(indirizzoDAO.prendiIndirizzoById(Integer.parseInt(result.getString("IdIndirizzo"))));
 					}
 					ordine.setId(idOrdine);
 					ordine.setProdotti(prodotti);

@@ -41,7 +41,7 @@
 						</tr>
 						<tr>
 							<td colspan="3">
-								<span>INDIRIZZO</span>
+								Via <span th:text="${o.indirizzo.via}"> </span><span th:text="${o.indirizzo.numero}">, </span><span th:text="${o.indirizzo.citta}"></span>, <span th:text="${o.indirizzo.cap}"></span>
 							</td>
 						</tr>
 						<tr th:each="p : ${o.prodotti}"><!-- x ogni prodotto -->
