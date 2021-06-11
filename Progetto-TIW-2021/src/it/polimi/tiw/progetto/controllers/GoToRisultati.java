@@ -57,6 +57,7 @@ public class GoToRisultati extends HttpServlet{
 
 		//HttpSession session = request.getSession();
 		//Utente usr = (Utente) session.getAttribute("utente");
+
 		ProdottoDAO prodottoDAO = new ProdottoDAO(connection);
 
 		List<Prodotto> offerte = new ArrayList<Prodotto>();
@@ -128,14 +129,17 @@ public class GoToRisultati extends HttpServlet{
 			List<Prodotto> mieiProdotti = new ArrayList<Prodotto>();
 			for(Prodotto o : offerte) {
 				int idForn = o.getFornitore().getID();
-				
+				o.setValore(0);
+				o.setQuantita(0);
 				if (cookies != null) {
 					for (int i = 0; i < cookies.length; i++) { //TODO: x evitare il cookie JSESSIONID?
+						
+						mieiProdotti = new ArrayList<Prodotto>();
+						
 						if(!cookies[i].getName().equals("JSESSIONID")) {
 							if(cookies[i].getName().split("-")[0].equals(String.valueOf((((Utente)s.getAttribute("utente")).getId()))))
 							{
 								if(cookies[i].getName().split("-")[1].equals(String.valueOf(idForn))) {
-									mieiProdotti = new ArrayList<Prodotto>();
 									prodotti = CookieParser.parseCookie(cookies[i]);
 									for(Prodotto p : prodotti) {
 										try {
@@ -150,13 +154,11 @@ public class GoToRisultati extends HttpServlet{
 											return;
 										}
 									}
+									o.setValore(CalcoloCosti.calcolaPrezzo(mieiProdotti));
+									o.setQuantita(CalcoloCosti.calcolaNumeroProdotti(mieiProdotti));
 								}
 							}
 						}
-						float valore = CalcoloCosti.calcolaPrezzo(mieiProdotti);
-						int qta = CalcoloCosti.calcolaNumeroProdotti(mieiProdotti);
-						o.setValore(valore);
-						o.setQuantita(qta);
 					}
 				}
 			}
