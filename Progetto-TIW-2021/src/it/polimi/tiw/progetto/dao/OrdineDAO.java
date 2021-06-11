@@ -19,6 +19,7 @@ import it.polimi.tiw.progetto.beans.Ordine;
 import it.polimi.tiw.progetto.beans.Prodotto;
 import it.polimi.tiw.progetto.beans.Range;
 import it.polimi.tiw.progetto.utils.CalcoloCosti;
+import it.polimi.tiw.progetto.utils.IdException;
 
 public class OrdineDAO {
 	private Connection connection;
@@ -32,7 +33,7 @@ public class OrdineDAO {
 	}
 	
 	
-	public List<Ordine> prendiOrdiniByIdUtente(int IdUtente) throws SQLException{  
+	public List<Ordine> prendiOrdiniByIdUtente(int IdUtente) throws SQLException, IdException{  
 		//TODO: testare
 		List<Ordine> ordini = new ArrayList<Ordine>();
 		List<Integer> idOrdini = new ArrayList<Integer>();
@@ -60,6 +61,8 @@ public class OrdineDAO {
 			try (PreparedStatement pstatement = connection.prepareStatement(query);) {
 				pstatement.setInt(1, idOrdine);
 				try (ResultSet result = pstatement.executeQuery();) {
+					if (!result.isBeforeFirst()) // no results
+						throw new IdException();
 					List<Prodotto> prodotti = new ArrayList<>();
 					while (result.next()) {
 						Prodotto prodotto = prodottoDAO.prendiProdottoByIdProdottoFornitore(Integer.parseInt(result.getString("IdProdotto")), 
@@ -117,6 +120,8 @@ public class OrdineDAO {
 		
 		try (PreparedStatement pstatement = connection.prepareStatement(query);) {
 			try (ResultSet result = pstatement.executeQuery();) {
+				if (!result.isBeforeFirst()) // no results
+					return 1;
 				if (result.next()) {
 					return result.getInt("Id")+1;
 				}

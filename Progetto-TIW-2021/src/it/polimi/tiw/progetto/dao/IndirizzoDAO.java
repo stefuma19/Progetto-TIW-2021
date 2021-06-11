@@ -5,7 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import it.polimi.tiw.progetto.beans.Indirizzo;;
+import it.polimi.tiw.progetto.beans.Indirizzo;
+import it.polimi.tiw.progetto.utils.IdException;;
 
 public class IndirizzoDAO {
 	private Connection connection;
@@ -39,7 +40,7 @@ public class IndirizzoDAO {
 		return idDaRitornare; 
 	}
 	
-	public Indirizzo prendiIndirizzoById(int Id) throws SQLException{
+	public Indirizzo prendiIndirizzoById(int Id) throws SQLException, IdException{
 		Indirizzo indirizzo = new Indirizzo();
 		String query = "select * "
 				+ "from indirizzo ind "
@@ -48,6 +49,8 @@ public class IndirizzoDAO {
 		try (PreparedStatement pstatement = connection.prepareStatement(query);) {
 			pstatement.setInt(1, Id);
 			try (ResultSet result = pstatement.executeQuery();) {
+				if (!result.isBeforeFirst()) // no results
+					throw new IdException();
 				if (result.next()) {
 					indirizzo.setId(Id);
 					indirizzo.setCitta(result.getString("Citta"));

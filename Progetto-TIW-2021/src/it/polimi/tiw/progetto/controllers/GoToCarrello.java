@@ -32,6 +32,7 @@ import it.polimi.tiw.progetto.dao.ProdottoDAO;
 import it.polimi.tiw.progetto.utils.CalcoloCosti;
 import it.polimi.tiw.progetto.utils.CookieParser;
 import it.polimi.tiw.progetto.utils.GestoreConnessione;
+import it.polimi.tiw.progetto.utils.IdException;
 
 @WebServlet("/GoToCarrello")
 public class GoToCarrello extends HttpServlet{
@@ -61,7 +62,15 @@ public class GoToCarrello extends HttpServlet{
 		FornitoreDAO fornitoreDAO = new FornitoreDAO(connection);
 		
 		if(request.getParameter("IdFor") != null) {  //se devo inserire un nuovo prodotto
-			response = addCookie(request, response);
+			try {
+				response = addCookie(request, response);
+			}catch (IdException e) {
+				response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+				return;
+			}catch (Exception e) {
+				response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Quantità selezionata minore o uguale a 0");
+				return;
+			}
 			response.sendRedirect(getServletContext().getContextPath() + "/GoToCarrello");
 		}
 		else { 										 //se devo solo visualizzare il carrello
@@ -80,6 +89,9 @@ public class GoToCarrello extends HttpServlet{
 							} catch (SQLException e) {
 								response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile recuperare fornitore da cookie");
 								return;
+							}catch (IdException e) {
+								response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+								return;
 							}
 							prodotti = CookieParser.parseCookie(cookies[i]);
 							for(Prodotto p : prodotti) {
@@ -89,6 +101,9 @@ public class GoToCarrello extends HttpServlet{
 									listaForn.add(daAggiungere);
 								} catch (SQLException e) {
 									response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile recuperare prodotti da cookie info");
+									return;
+								}catch (IdException e) {
+									response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
 									return;
 								}
 							}
@@ -118,12 +133,18 @@ public class GoToCarrello extends HttpServlet{
 		doGet(request, response);
 	}
 	
-	private HttpServletResponse addCookie(HttpServletRequest request, HttpServletResponse response) {
+	private HttpServletResponse addCookie(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		ProdottoDAO prodottoDAO = new ProdottoDAO(connection);
+		FornitoreDAO fornitoreDAO = new FornitoreDAO(connection);
+		if(!prodottoDAO.esisteProdotto(Integer.parseInt(request.getParameter("IdProd"))) || 
+				!fornitoreDAO.esisteFornitore(Integer.parseInt(request.getParameter("IdFor")))) {
+			throw new IdException();
+		}
 		boolean primo=true;  //se dobbiamo creare un cookie per il fornitore
 		Cookie[] cookies = request.getCookies();
 		HttpSession s = request.getSession(); 
 		if(Integer.parseInt(request.getParameter("quantita")) < 1){
-			return response;
+			throw new Exception();
 		}else if (cookies != null) {
 			for (int i = 0; i < cookies.length; i++) {
 				Cookie c = cookies[i];
@@ -163,5 +184,13 @@ public class GoToCarrello extends HttpServlet{
 			response.addCookie(coo);
 		}
 		return response;
+	}
+	
+	public void destroy() {
+		try {
+			GestoreConnessione.closeConnection(connection);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }

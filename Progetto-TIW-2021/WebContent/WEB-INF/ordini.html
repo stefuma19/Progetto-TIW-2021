@@ -20,7 +20,7 @@
 				<td>
 					<form action="GoToRisultati" method="POST"> <!-- SI FA COSI'? -->
 						Inserisci una parola chiave per la ricerca nel catalogo: 
-						<input type="text" name="keyword">
+						<input type="text" name="keyword" id="keyword" required>
 						<input type="submit" value="Cerca">
 					</form>
 				</td>
@@ -55,6 +55,7 @@
 					</table>
 				</td>
 			</tr>
+			<tr th:if="${ordini.empty}"><td>Non sono presenti ordini</td></tr>
 		</table>
 	</div>
 </body>

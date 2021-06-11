@@ -23,6 +23,7 @@ import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 import it.polimi.tiw.progetto.utils.CalcoloCosti;
 import it.polimi.tiw.progetto.utils.CookieParser;
 import it.polimi.tiw.progetto.utils.GestoreConnessione;
+import it.polimi.tiw.progetto.utils.IdException;
 import it.polimi.tiw.progetto.beans.*;
 import it.polimi.tiw.progetto.dao.FornitoreDAO;
 import it.polimi.tiw.progetto.dao.IndirizzoDAO;
@@ -60,8 +61,21 @@ public class GoToOrdini extends HttpServlet{
 		HttpSession s = request.getSession(); 
 		
 		if(request.getParameter("idForn") != null) {  //se devo inserire un nuovo ordine
-			
-			
+			try {
+				if(!fornitoreDAO.esisteFornitore(Integer.parseInt(request.getParameter("idForn")))) {
+					response.sendError(HttpServletResponse.SC_BAD_REQUEST, "L'ID a cui si sta tentando di accedere non esiste");
+					return;
+				}
+				if(request.getParameter("citta")==null || request.getParameter("citta")=="" || 
+						request.getParameter("via")==null || request.getParameter("via")=="" ||
+						request.getParameter("cap")==null || request.getParameter("cap")=="" ||
+						request.getParameter("numero")==null || request.getParameter("numero")=="") {
+							response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Campi indirizzo assenti");
+							return;
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 			int idFor = Integer.parseInt(request.getParameter("idForn"));
 			int idUtente = (((Utente)s.getAttribute("utente")).getId());
 			List<Prodotto> mieiProdotti = new ArrayList<Prodotto>();
@@ -80,12 +94,18 @@ public class GoToOrdini extends HttpServlet{
 				} catch (SQLException e) {
 					response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile recuperare prodotti da id prodotto e id fornitore");
 					return;
+				}catch (IdException e) {
+					response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+					return;
 				}
 			}
 			try {
 				totale = CalcoloCosti.calcolaTotale(mieiProdotti, fornitoreDAO.prendiFornitoreById(idFor));
 			}catch (SQLException e) {
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile recuperare fornitore da ID");
+				return;
+			}catch (IdException e) {
+				response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
 				return;
 			}
 			
@@ -113,6 +133,9 @@ public class GoToOrdini extends HttpServlet{
 		}catch(SQLException e) {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile prendere ordine by id utente");
 			e.printStackTrace();
+		}catch (IdException e) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+			return;
 		}
 		
 
@@ -126,5 +149,13 @@ public class GoToOrdini extends HttpServlet{
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		doGet(request, response);
+	}
+	
+	public void destroy() {
+		try {
+			GestoreConnessione.closeConnection(connection);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }

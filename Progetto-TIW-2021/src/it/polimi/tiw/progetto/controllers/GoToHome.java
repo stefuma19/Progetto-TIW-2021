@@ -25,6 +25,7 @@ import it.polimi.tiw.progetto.beans.Prodotto;
 import it.polimi.tiw.progetto.beans.Utente;
 import it.polimi.tiw.progetto.dao.ProdottoDAO;
 import it.polimi.tiw.progetto.utils.GestoreConnessione;
+import it.polimi.tiw.progetto.utils.IdException;
 
 @WebServlet("/GoToHome")
 public class GoToHome extends HttpServlet{
@@ -63,6 +64,9 @@ public class GoToHome extends HttpServlet{
 					prodotti.add(prodottoDAO.prendiProdottoById(id));
 				}catch (SQLException e) {
 					response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile recuperare prodotti già visualizzati");
+					return;
+				}catch (IdException e) {
+					response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
 					return;
 				}
 		}

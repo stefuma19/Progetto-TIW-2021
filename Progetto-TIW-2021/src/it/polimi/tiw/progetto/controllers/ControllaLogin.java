@@ -59,7 +59,6 @@ public class ControllaLogin extends HttpServlet{
 				throw new Exception("Credenziali mancanti o inesistenti");
 			}
 		} catch (Exception e) {
-			// for debugging only e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Credenziali non presenti");
 			return;
 		}

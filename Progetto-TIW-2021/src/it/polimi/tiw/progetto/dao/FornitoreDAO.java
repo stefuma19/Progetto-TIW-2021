@@ -12,6 +12,7 @@ import java.util.List;
 import it.polimi.tiw.progetto.beans.Fornitore;
 import it.polimi.tiw.progetto.beans.Prodotto;
 import it.polimi.tiw.progetto.beans.Range;
+import it.polimi.tiw.progetto.utils.IdException;
 
 public class FornitoreDAO {
 
@@ -21,7 +22,7 @@ public class FornitoreDAO {
 		this.connection = connection;
 	}
 	
-	public Fornitore prendiFornitoreById(int id) throws SQLException{
+	public Fornitore prendiFornitoreById(int id) throws SQLException, IdException{
 		//TODO: query da cambiare? 
 		String query = "select * from fornitore f join politica po on po.Id=f.IdPoliticaForn "  //TODO: da testare
 				+ "where f.Id= ? "; 
@@ -29,8 +30,9 @@ public class FornitoreDAO {
 		try (PreparedStatement pstatement = connection.prepareStatement(query);) {
 			pstatement.setInt(1, id);
 			try (ResultSet result = pstatement.executeQuery();) {
+				if (!result.isBeforeFirst()) // no results
+					throw new IdException();
 				while (result.next()) {
-					
 					fornitore.setNome(result.getString("NomeFor"));
 					fornitore.setValutazione(result.getString("Valutazione"));
 					fornitore.setSoglia((result.getString("Soglia") == null) ? -1 : Integer.parseInt(result.getString("Soglia")));
@@ -54,5 +56,17 @@ public class FornitoreDAO {
 		fornitore.setPolitica(fasce);
 		
 		return fornitore;
+	}
+	
+	public boolean esisteFornitore(int idForn) throws SQLException {
+		String query = "select * from fornitore fo where fo.Id = ?"; 
+		try (PreparedStatement pstatement = connection.prepareStatement(query);) {
+			pstatement.setInt(1, idForn);
+			try (ResultSet result = pstatement.executeQuery();) {
+				if (!result.isBeforeFirst()) // no results
+					return false;
+				return true;
+			}
+		}
 	}
 }

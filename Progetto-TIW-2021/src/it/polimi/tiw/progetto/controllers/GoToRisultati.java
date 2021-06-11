@@ -29,6 +29,7 @@ import it.polimi.tiw.progetto.dao.ProdottoDAO;
 import it.polimi.tiw.progetto.utils.CalcoloCosti;
 import it.polimi.tiw.progetto.utils.CookieParser;
 import it.polimi.tiw.progetto.utils.GestoreConnessione;
+import it.polimi.tiw.progetto.utils.IdException;
 
 @WebServlet("/GoToRisultati")
 public class GoToRisultati extends HttpServlet{
@@ -60,7 +61,7 @@ public class GoToRisultati extends HttpServlet{
 
 		List<Prodotto> offerte = new ArrayList<Prodotto>();
 		
-		if(request.getParameter("keyword") != null) {
+		if(request.getParameter("keyword") != null && !request.getParameter("keyword").equals("")) {
 			try {
 				prodotti = prodottoDAO.prendiProdottiByKeyword(request.getParameter("keyword"));
 			} catch (SQLException e) {
@@ -74,7 +75,6 @@ public class GoToRisultati extends HttpServlet{
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
 		
 		if(request.getParameter("idProdotto") != null) {
-			
 			boolean presente = false;
 			for(Prodotto p : prodotti) {
 				if(p.getID() == Integer.parseInt(request.getParameter("idProdotto"))) {
@@ -89,6 +89,9 @@ public class GoToRisultati extends HttpServlet{
 					prodotti.add(prodottoDAO.prendiProdottoById(Integer.parseInt(request.getParameter("idProdotto"))));
 				}catch(SQLException e) {
 					e.printStackTrace();
+				}catch (IdException e) {
+					response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+					return;
 				}
 			}
 			int idProdotto = Integer.parseInt(request.getParameter("idProdotto"));
@@ -113,6 +116,9 @@ public class GoToRisultati extends HttpServlet{
 				offerte = prodottoDAO.prendiOfferteByIdProdotto(Integer.parseInt(request.getParameter("idProdotto")));
 			} catch (SQLException e) {
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile recuperare prodotti da id");
+				return;
+			}catch (IdException e) {
+				response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
 				return;
 			}
 			
@@ -139,6 +145,9 @@ public class GoToRisultati extends HttpServlet{
 										} catch (SQLException e) {
 											response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile recuperare prodotti da cookie info");
 											return;
+										}catch (IdException e) {
+											response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+											return;
 										}
 									}
 								}
@@ -160,5 +169,13 @@ public class GoToRisultati extends HttpServlet{
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		doGet(request, response);
+	}
+	
+	public void destroy() {
+		try {
+			GestoreConnessione.closeConnection(connection);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }
