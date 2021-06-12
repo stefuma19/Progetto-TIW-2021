@@ -7,12 +7,14 @@
 		href="../css/mystyle.css" th:href="@{/css/mystyle.css}" />
 </head>
 <body>
-	<div class="logUtente">
-		Felice di vederti <span th:text="${session.utente.nome}">utente</span>
-		&emsp;<a href="Logout">Logout</a>
+	<div>
+		<table class="logUtente"><tr>
+			<td>Felice di vederti <span th:text="${session.utente.nome}">utente</span></td>
+			<td>&emsp;<a href="Logout">Logout</a></td>
+		</tr></table>
 	</div>
-	<div class="barraMenu">
-		<table>
+	<div>
+		<table class="barraMenu">
 			<tr>
 				<td><a href="GoToHome">Home</a></td>
 				<td>&emsp;<a href="GoToCarrello">Carrello</a></td>
@@ -30,15 +32,18 @@
 	<div>
 		<table class="tabellaCentrata">
 			<tr  th:each="p : ${prodotti}">
-				<td style="text-align: center; padding-right: 5px;">
-					<img th:src="@{'data:image/jpg;base64,'+${p.immagine}}" th:alt="${p.nome}" width="150" height="150" />
-				</td>
-				<td valign="top">
-					<span th:text="${p.categoria}">Categoria</span><br><br>
+				<td class="tdImmagine">
 					<a th:href="@{/GoToRisultati(idProdotto=${p.ID})}">
-					<span th:text="${p.nome}">Nome prodotto</span></a> - 
-					<span th:text="${#numbers.formatDecimal(p.prezzo, 0, 'COMMA', 2, 'POINT')}">Prezzo</span> &euro;<br><br>
-					<span th:text="${p.descrizione}">Descrizione</span>
+						<img th:src="@{'data:image/jpg;base64,'+${p.immagine}}" th:alt="${p.nome}" class="immagineGrande" />
+					</a>
+				</td>
+				<td class="tdAlto">
+					<a th:href="@{/GoToRisultati(idProdotto=${p.ID})}">
+						<span th:text="${p.categoria}">Categoria</span><br><br>
+						<b><span th:text="${p.nome}">Nome prodotto</span></b> - 
+						<span th:text="${#numbers.formatDecimal(p.prezzo, 0, 'COMMA', 2, 'POINT')}">Prezzo</span> &euro;<br><br>
+						<span class="spanDescrizione" th:text="${p.descrizione}">Descrizione</span>
+					</a>
 				</td> 
 			</tr>
 		</table>		

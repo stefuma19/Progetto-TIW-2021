@@ -76,11 +76,13 @@ public class ControllaLogin extends HttpServlet{
 		if (usr == null) {
 			ServletContext servletContext = getServletContext();
 			final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
+			ctx.setVariable("emailInserita", (email != null || !email.isEmpty()) ? email : "email");
 			ctx.setVariable("errorMsg", "Email o password errata");
 			path = "/login.html";
 			templateEngine.process(path, ctx, response.getWriter());
 		} else {
 			request.getSession().setAttribute("utente", usr);
+			request.getSession().setAttribute("listaVisualizzati", null);
 			path = getServletContext().getContextPath() + "/GoToHome";
 			response.sendRedirect(path);
 		}

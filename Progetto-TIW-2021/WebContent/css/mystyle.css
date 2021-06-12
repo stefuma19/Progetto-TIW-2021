@@ -1,19 +1,80 @@
+.divLogin{
+	margin-top: 105px;
+	font-size: 150%;
+}
 .logUtente{	
-	text-align: right;
+	position:absolute;
+	top:0;
+	right:0; 
 }
 .barraMenu {
-	position: relative;
-	left: 25%;
+	margin-top: 25px;
 	margin-bottom: 25px;
 }
-.tabellaCentrata, .tabellaLogin{
+.tabellaCentrata, .tabellaLogin, .barraMenu{
 	margin-left: auto;
 	margin-right: auto;
+	border-collapse: collapse;
 }
-table.tabellaLogin input[type=text], table.tabellaLogin input[type=password]{
-	width: 200px;
+.tabellaProdotti{
+	border: 1px solid black;
 }
-table.barraMenu  a, a:hover, a:focus, a:active {
+.tabellaProdotti, .tabellaRisultati{
+	width: 100%;
+}
+.tdAlto{
+	vertical-align: top;
+	width: 500px; 
+}
+.tdImmagine{
+	vertical-align: top;
+	text-align: center;
+	padding-right: 5px;
+	width: 150px;
+}
+.immagineGrande{
+	border-radius: 8px;
+	width: 150px;
+	height: 150px;
+}
+.immagineMedia{
+	border-radius: 8px;
+	width: 110px;
+	height: 110px;
+}
+.spanDescrizione{
+	 text-align: justify;
+	 display:block;
+}
+.testoDx{
+	text-align: right;
+}
+table.logUtente a:link, a:visited {
+      text-decoration: none;
+      color: blue;
+ }
+table.tabellaLogin input[type=email], table.tabellaLogin input[type=password]{
+	font-size: 90%;
+	width: 350px;
+}
+table.tabellaLogin input[type=submit]{
+	font-size: 90%;
+	width: 100px;
+}
+table.tabellaLogin td[colspan="2"] {
+	text-align: center;
+}
+table.barraMenu a:link, a:visited {
+      text-decoration: none;
+      color: blue;
+ }
+table.barraMenu input[type=text]{
+	width: 400px;
+}
+table.tabellaProdotti, table.tabellaRisultati, table.tabellaCentrata  a:link, a:visited, a:hover {
       text-decoration: none;
       color: black;
+ }
+table.tabellaCentrata  tr {
+      border-bottom: 15pt solid white;
  }

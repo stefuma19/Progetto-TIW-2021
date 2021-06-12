@@ -7,31 +7,33 @@
 		href="../css/mystyle.css" th:href="@{/css/mystyle.css}" />
 </head>
 <body>
-	<div class="logUtente">
-		Felice di vederti <span th:text="${session.utente.nome}">utente</span>
-		&emsp;<a th:href="Logout">Logout</a>
+	<div>
+		<table class="logUtente"><tr>
+			<td>Felice di vederti <span th:text="${session.utente.nome}">utente</span></td>
+			<td>&emsp;<a href="Logout">Logout</a></td>
+		</tr></table>
 	</div>
-	<div class="barraMenu">
-		<table>
+	<div>
+		<table class="barraMenu">
 			<tr>
 				<td><a href="GoToHome">Home</a></td>
-				<td><a href="GoToCarrello">Carrello</a></td>
-				<td><a href="GoToOrdini">Ordini</a></td>
+				<td>&emsp;<a href="GoToCarrello">Carrello</a></td>
+				<td>&emsp;<a href="GoToOrdini">Ordini</a></td>
 				<td>
-					<form action="GoToRisultati" method="POST"> <!-- SI FA COSI'? -->
-						Inserisci una parola chiave per la ricerca nel catalogo: 
+					<form action="GoToRisultati" method="POST">
+						&emsp;Inserisci una parola chiave per la ricerca nel catalogo: 
 						<input type="text" name="keyword" id="keyword" required>
 						<input type="submit" value="Cerca">
 					</form>
 				</td>
 			</tr>
-		</table>	
+		</table>
 	</div>
 	<div>
 		<table class="tabellaCentrata">
 			<tr th:each="o : ${ordini}" >
 				<td>
-					<table style="border: 1px solid black; width: 100%; font-size: 18px;">
+					<table class="tabellaProdotti" style="font-size: 18px;">
 						<tr>
 							<td colspan="3" style="font-size: 20px;">
 								Acquisto effettuato in data <span th:text="${#dates.format(o.data, 'dd/MM/yyyy')}">data</span><br>

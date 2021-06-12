@@ -7,20 +7,25 @@
 		href="css/mystyle.css" th:href="@{/css/mystyle.css}" />
 </head>
 <body>
-	<h2 align="center">Benvenuto</h2>
-	<form action="ControllaLogin" method="POST">
-		<table class=tabellaLogin>
-			<tr>
-				<td>Email </td><td><input type="text" name="email" required></td>
-			</tr>
-			<tr>
-				<td>Password </td><td><input type="password" name="psw" required></td>
-			</tr>
-			<tr>			
-				<td><input type="submit" value="Login"></td>
-				<td th:text=" ${errorMsg}"/>
-			</tr>		
-		</table><br>
-	</form>
+	<div class="divLogin">
+		<h2 align="center">Benvenuto nel carrello online</h2>
+		<h4 align="center">Inserisci le credenziali per accedere</h4>
+		<form action="ControllaLogin" method="POST">
+			<table class=tabellaLogin>
+				<tr>
+					<td><input type="email" name="email" placeholder="email" required th:value=" ${emailInserita}"></td>
+				</tr>
+				<tr>
+					<td><input type="password" name="psw" placeholder="password" required></td>
+				</tr>
+				<tr>			
+					<td colspan="2" th:text=" ${errorMsg}"> </td>
+				</tr>
+				<tr>			
+					<td colspan="2"><input type="submit" value="Login"></td>
+				</tr>		
+			</table><br>
+		</form>
+	</div>
 </body>
 </html>

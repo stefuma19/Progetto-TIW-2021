@@ -7,51 +7,52 @@
 		href="../css/mystyle.css" th:href="@{/css/mystyle.css}" />
 </head>
 <body>
-	<div class="logUtente">
-		Felice di vederti <span th:text="${session.utente.nome}">utente</span>
-		&emsp;<a href="Logout">Logout</a>
+	<div>
+		<table class="logUtente"><tr>
+			<td>Felice di vederti <span th:text="${session.utente.nome}">utente</span></td>
+			<td>&emsp;<a href="Logout">Logout</a></td>
+		</tr></table>
 	</div>
-	<div class="barraMenu">
-		<table>
+	<div>
+		<table class="barraMenu">
 			<tr>
 				<td><a href="GoToHome">Home</a></td>
-				<td><a href="GoToCarrello">Carrello</a></td>
-				<td><a href="GoToOrdini">Ordini</a></td>
+				<td>&emsp;<a href="GoToCarrello">Carrello</a></td>
+				<td>&emsp;<a href="GoToOrdini">Ordini</a></td>
 				<td>
-					<form action="GoToRisultati" method="POST"> <!-- SI FA COSI'? -->
-						Inserisci una parola chiave per la ricerca nel catalogo: 
+					<form action="GoToRisultati" method="POST">
+						&emsp;Inserisci una parola chiave per la ricerca nel catalogo: 
 						<input type="text" name="keyword" id="keyword" required>
 						<input type="submit" value="Cerca">
 					</form>
 				</td>
 			</tr>
-		</table>	
+		</table>
 	</div>
 	<div>
 		<table class="tabellaCentrata">
 			<tr  th:each="f : ${fornitori}">
 				<td>
-					<table style="border: 1px solid black; width: 100%;">
-						<tr><td colspan="3"><span th:text="${f.fornitore.nome}"></span><br><br></td></tr>
+					<table class="tabellaProdotti">
+						<tr><td colspan="3"><b><span th:text="${f.fornitore.nome}">Fornitore</span></b><br><br></td></tr>
 						<tr th:each="p : ${f.prodotti}">
 							<td style="width: 110px;">
-								<img th:src="@{'data:image/jpg;base64,'+${p.immagine}}" th:alt="${p.nome}" width="110" height="110" />
+								<img th:src="@{'data:image/jpg;base64,'+${p.immagine}}" th:alt="${p.nome}" class="immagineMedia" />
 							</td>
 							<td>
 								<span th:text="${p.categoria}">Categoria</span> - 
-								<a th:href="@{/GoToRisultati(idProdotto=${p.ID})}">
-								<span th:text="${p.nome}">Nome prodotto</span></a>
+								<span th:text="${p.nome}">Nome prodotto</span>
 							</td>
-							<td style="text-align: right; width: 90px;">							
+							<td class="testoDx" style="width: 90px;">							
 								x<span th:text="${p.quantita}">Quantità</span> 
 								<span th:text="${#numbers.formatDecimal(p.prezzo, 0, 'COMMA', 2, 'POINT')}">Prezzo</span> &euro;
 							</td>
 						</tr>
-						<tr style="text-align: right;">
+						<tr class="testoDx">
 							<td colspan="2"><span>Totale:</span></td>
 							<td><span th:text="${#numbers.formatDecimal(f.totaleCosto, 0, 'COMMA', 2, 'POINT')}"></span> &euro;</td>
 						</tr>
-						<tr style="text-align: right;">
+						<tr class="testoDx">
 							<td colspan="2"><span>Spedizione:</span></td>
 							<td><span th:text="${#numbers.formatDecimal(f.costoSpedizione, 0, 'COMMA', 2, 'POINT')}"></span> &euro;</td>
 						</tr>

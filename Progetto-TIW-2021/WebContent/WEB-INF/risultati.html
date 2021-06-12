@@ -7,42 +7,47 @@
 		href="../css/mystyle.css" th:href="@{/css/mystyle.css}" />
 </head>
 <body>
-	<div class="logUtente">
-		Felice di vederti <span th:text="${session.utente.nome}">utente</span>
-		&emsp;<a href="Logout">Logout</a>
+	<div>
+		<table class="logUtente"><tr>
+			<td>Felice di vederti <span th:text="${session.utente.nome}">utente</span></td>
+			<td>&emsp;<a href="Logout">Logout</a></td>
+		</tr></table>
 	</div>
-	<div class="barraMenu">
-		<table>
+	<div>
+		<table class="barraMenu">
 			<tr>
 				<td><a href="GoToHome">Home</a></td>
-				<td><a href="GoToCarrello">Carrello</a></td>
-				<td><a href="GoToOrdini">Ordini</a></td>
+				<td>&emsp;<a href="GoToCarrello">Carrello</a></td>
+				<td>&emsp;<a href="GoToOrdini">Ordini</a></td>
 				<td>
 					<form action="GoToRisultati" method="POST">
-						Inserisci una parola chiave per la ricerca nel catalogo: 
+						&emsp;Inserisci una parola chiave per la ricerca nel catalogo: 
 						<input type="text" name="keyword" id="keyword" required>
 						<input type="submit" value="Cerca">
 					</form>
 				</td>
 			</tr>
-		</table>	
+		</table>
 	</div>
 	<div>
 		<table class="tabellaCentrata">
 			<tr th:each="p : ${prodotti}">
 				<td>
-					<table style="width: 100%;">
+					<table class="tabellaRisultati">
 						<tr>
-							<td style="text-align: center; padding-right: 5px; width: 150px;">
-								<img th:src="@{'data:image/jpg;base64,'+${p.immagine}}" th:alt="${p.nome}" width="150" height="150" />
-							</td>
-							<td valign="top">
-								<span th:text="${p.categoria}">Categoria</span><br><br>
+							<td class="tdImmagine">
 								<a th:href="@{/GoToRisultati(idProdotto=${p.ID})}">
-								<span th:text="${p.ID}">codice</span> -
-								<span th:text="${p.nome}">Nome prodotto</span></a> - 
-								<span th:text="${#numbers.formatDecimal(p.prezzo, 0, 'COMMA', 2, 'POINT')}">Prezzo</span> &euro;<br><br>
-								<span th:if="${p.id} == ${idDaMostrare}" th:text="${p.descrizione}">Descrizione</span>
+									<img th:src="@{'data:image/jpg;base64,'+${p.immagine}}" th:alt="${p.nome}" class="immagineGrande" />
+								</a>
+							</td>
+							<td class="tdAlto">
+								<a th:href="@{/GoToRisultati(idProdotto=${p.ID})}">
+									<span th:text="${p.categoria}">Categoria</span><br><br>
+									<span th:text="${p.ID}">codice</span> -
+									<b><span th:text="${p.nome}">Nome prodotto</span></b> - 
+									<span th:text="${#numbers.formatDecimal(p.prezzo, 0, 'COMMA', 2, 'POINT')}">Prezzo</span> &euro;<br><br>
+									<span class="spanDescrizione" th:if="${p.id} == ${idDaMostrare}" th:text="${p.descrizione}">Descrizione</span>
+								</a>
 							</td> 
 						</tr>
 						<tr th:if="${p.id} == ${idDaMostrare}">
