@@ -10,7 +10,7 @@
 	margin-left: auto;
 	margin-right: auto;
 }
-table.tabellaLogin input[type=text], table.tabellaCentrata input[type=password]{
+table.tabellaLogin input[type=text], table.tabellaLogin input[type=password]{
 	width: 200px;
 }
 table.barraMenu  a, a:hover, a:focus, a:active {
