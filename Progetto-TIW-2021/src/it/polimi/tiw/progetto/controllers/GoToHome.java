@@ -47,17 +47,16 @@ public class GoToHome extends HttpServlet{
 		templateResolver.setSuffix(".html");
 	}
 	
+	@SuppressWarnings("unchecked")
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		
-		//HttpSession session = request.getSession();
-		//Utente usr = (Utente) session.getAttribute("utente");
 		ProdottoDAO prodottoDAO = new ProdottoDAO(connection);
 		Queue<Integer> listaVisualizzati = new LinkedList<>();
 		List<Prodotto> prodotti = new ArrayList<Prodotto>();
-		
 		HttpSession session = request.getSession();
-		if(session.getAttribute("listaVisualizzati") != null) {
+		
+		if(session.getAttribute("listaVisualizzati") != null) {  //se ho dei prodotti già "visualizzati"
 			listaVisualizzati = (Queue<Integer>) session.getAttribute("listaVisualizzati");
 			for(Integer id : listaVisualizzati)
 				try {
@@ -70,15 +69,16 @@ public class GoToHome extends HttpServlet{
 					return;
 				}
 		}
-		if(prodotti.size()<5)
-		try {
-			prodotti.addAll(prodottoDAO.prendiProdotti(listaVisualizzati,5-prodotti.size()));
-		} catch (SQLException e) {
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile recuperare prodotti random");
-			return;
+		
+		if(prodotti.size()<5){   //riempio i 5 prodotti da visualizzare con prodotti random
+			try {
+				prodotti.addAll(prodottoDAO.prendiProdotti(listaVisualizzati,5-prodotti.size()));
+			} catch (SQLException e) {
+				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile recuperare prodotti random");
+				return;
+			}
 		}
 		
-	
 		String path = "/WEB-INF/home.html";
 		response.setContentType("text");
 		ServletContext servletContext = getServletContext();

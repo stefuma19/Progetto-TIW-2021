@@ -86,7 +86,7 @@ public class GoToOrdini extends HttpServlet{
 			Cookie c = new Cookie(String.valueOf(idUtente) + "-" + String.valueOf(idFor),"");
 			c.setMaxAge(0);
 			response.addCookie(c);
-			for(Prodotto p : prodotti) {
+			for(Prodotto p : prodotti) {  //prendo informazioni prodotto da cookie
 				try {
 					Prodotto daAggiungere = prodottoDAO.prendiProdottoByIdProdottoFornitore(p.getID(),p.getFornitore().getID());
 					daAggiungere.setQuantita(p.getQuantita());
@@ -99,7 +99,8 @@ public class GoToOrdini extends HttpServlet{
 					return;
 				}
 			}
-			try {
+			
+			try {  //calcolo costi dell'ordine
 				totale = CalcoloCosti.calcolaTotale(mieiProdotti, fornitoreDAO.prendiFornitoreById(idFor));
 			}catch (SQLException e) {
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile recuperare fornitore da ID");
@@ -109,24 +110,24 @@ public class GoToOrdini extends HttpServlet{
 				return;
 			}
 			
-			try {
+			try {  //gestione indirizzo dell'ordine
 				idInd = indirizzoDAO.prendiIdIndirizzoByParam(request.getParameter("citta"), request.getParameter("via"), request.getParameter("cap"), Integer.parseInt(request.getParameter("numero")));
 			}catch (SQLException e) {
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile recuperare valore indirizzo");
 				return;
 			}
-			try {
+			
+			try {  //aggiunta ordine nel db
 				ordineDAO.aggiungiOrdine(totale, idInd, idUtente, idFor, mieiProdotti);
 			}catch (SQLException e) {
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile aggiungere ordine");
 				return;
 			}
-			//aggiungo ordine e invio redirect
 			
 			response.sendRedirect(getServletContext().getContextPath() + "/GoToOrdini");
 		}
 		
-			//mostro tutti gli ordini presi dal db
+		//mostro tutti gli ordini presi dal db
 
 		try {
 			ordiniDaMostrare = ordineDAO.prendiOrdiniByIdUtente(((Utente)s.getAttribute("utente")).getId());

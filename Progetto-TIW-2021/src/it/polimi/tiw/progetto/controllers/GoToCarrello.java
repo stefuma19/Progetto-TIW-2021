@@ -77,7 +77,8 @@ public class GoToCarrello extends HttpServlet{
 			HttpSession s = request.getSession(); 
 			Cookie[] cookies = request.getCookies();
 			List<Prodotto> prodotti = new ArrayList<>();
-			if (cookies != null) {
+			
+			if (cookies != null) {  //se ho dei cookie 
 				for (int i = 0; i < cookies.length; i++) { //TODO: x evitare il cookie JSESSIONID?
 					List<Prodotto> listaForn = new ArrayList<Prodotto>();
 					if(!cookies[i].getName().equals("JSESSIONID")) {
@@ -94,7 +95,7 @@ public class GoToCarrello extends HttpServlet{
 								return;
 							}
 							prodotti = CookieParser.parseCookie(cookies[i]);
-							for(Prodotto p : prodotti) {
+							for(Prodotto p : prodotti) {  //prendo info prodotto e le aggiungo al carrello creato in precedenza
 								try {
 									Prodotto daAggiungere = prodottoDAO.prendiProdottoByIdProdottoFornitore(p.getID(),p.getFornitore().getID());
 									daAggiungere.setQuantita(p.getQuantita());
