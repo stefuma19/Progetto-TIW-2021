@@ -16,11 +16,11 @@
 	<div>
 		<table class="barraMenu">
 			<tr>
-				<td><a href="GoToHome">Home</a></td>
-				<td>&emsp;<a href="GoToCarrello">Carrello</a></td>
-				<td>&emsp;<a href="GoToOrdini">Ordini</a></td>
+				<td><a href="VisualizzaHome">Home</a></td>
+				<td>&emsp;<a href="VisualizzaCarrello">Carrello</a></td>
+				<td>&emsp;<a href="VisualizzaOrdini">Ordini</a></td>
 				<td>
-					<form action="GoToRisultati" method="POST">
+					<form action="CercaKeyword" method="POST">
 						&emsp;Inserisci una parola chiave per la ricerca nel catalogo: 
 						<input type="text" name="keyword" id="keyword" required>
 						<input type="submit" value="Cerca">
@@ -54,11 +54,11 @@
 						</tr>
 						<tr class="testoDx">
 							<td colspan="2"><span>Spedizione:</span></td>
-							<td><span th:text="${#numbers.formatDecimal(f.costoSpedizione, 0, 'COMMA', 2, 'POINT')}"></span> &euro;</td>
+							<td><span th:text="${f.costoSpedizione} &gt; 0 ? ${#numbers.formatDecimal(product.valore, 0, 'COMMA', 2, 'POINT')} : '0.00'"></span> &euro;</td>
 						</tr>
 						<tr>
 							<td colspan="3">
-								<form th:action="@{/GoToOrdini(idForn=${f.fornitore.ID})}" method="POST">
+								<form th:action="@{/AggiungiOrdine(idForn=${f.fornitore.ID})}" method="POST">
 									<table style="width: 100%; text-align: right; margin-top: 10px;">
 										<tr><td>Città:</td><td style="width:30%;"><input type="text" name="citta" th:value="${session.utente.indirizzo.citta}" id="citta" required></td></tr>
 										<tr><td>Via:</td><td><input type="text" name="via" th:value="${session.utente.indirizzo.via}" id="via" required></td></tr>

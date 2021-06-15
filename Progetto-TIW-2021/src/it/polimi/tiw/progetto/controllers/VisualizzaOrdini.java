@@ -4,13 +4,12 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,19 +20,23 @@ import org.thymeleaf.context.WebContext;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
-import it.polimi.tiw.progetto.beans.Prodotto;
-import it.polimi.tiw.progetto.beans.Utente;
-import it.polimi.tiw.progetto.dao.ProdottoDAO;
+import it.polimi.tiw.progetto.utils.CalcoloCosti;
+import it.polimi.tiw.progetto.utils.CookieParser;
 import it.polimi.tiw.progetto.utils.GestoreConnessione;
 import it.polimi.tiw.progetto.utils.IdException;
+import it.polimi.tiw.progetto.beans.*;
+import it.polimi.tiw.progetto.dao.FornitoreDAO;
+import it.polimi.tiw.progetto.dao.IndirizzoDAO;
+import it.polimi.tiw.progetto.dao.OrdineDAO;
+import it.polimi.tiw.progetto.dao.ProdottoDAO;
 
-@WebServlet("/GoToHome")
-public class GoToHome extends HttpServlet{
+@WebServlet("/VisualizzaOrdini")
+public class VisualizzaOrdini extends HttpServlet{
 	private static final long serialVersionUID = 1L;
-	private Connection connection = null;
 	private TemplateEngine templateEngine;
+	private Connection connection = null;
 
-	public GoToHome() {
+	public VisualizzaOrdini() {
 		super();
 	}
 
@@ -47,43 +50,30 @@ public class GoToHome extends HttpServlet{
 		templateResolver.setSuffix(".html");
 	}
 	
-	@SuppressWarnings("unchecked")
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		
-		ProdottoDAO prodottoDAO = new ProdottoDAO(connection);
-		Queue<Integer> listaVisualizzati = new LinkedList<>();
-		List<Prodotto> prodotti = new ArrayList<Prodotto>();
-		HttpSession session = request.getSession();
+		List<Ordine> ordiniDaMostrare = new ArrayList<Ordine>();
+		OrdineDAO ordineDAO = new OrdineDAO(connection);
+		HttpSession s = request.getSession(); 
 		
-		if(session.getAttribute("listaVisualizzati") != null) {  //se ho dei prodotti già "visualizzati"
-			listaVisualizzati = (Queue<Integer>) session.getAttribute("listaVisualizzati");
-			for(Integer id : listaVisualizzati)
-				try {
-					prodotti.add(prodottoDAO.prendiProdottoById(id));
-				}catch (SQLException e) {
-					response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile recuperare prodotti già visualizzati");
-					return;
-				}catch (IdException e) {
-					response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
-					return;
-				}
+		//mostro tutti gli ordini presi dal db
+
+		try {
+			ordiniDaMostrare = ordineDAO.prendiOrdiniByIdUtente(((Utente)s.getAttribute("utente")).getId());
+		}catch(SQLException e) {
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile prendere ordine da id utente");
+			e.printStackTrace();
+		}catch (IdException e) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+			return;
 		}
 		
-		if(prodotti.size()<5){   //riempio i 5 prodotti da visualizzare con prodotti random
-			try {
-				prodotti.addAll(prodottoDAO.prendiProdotti(listaVisualizzati,5-prodotti.size()));
-			} catch (SQLException e) {
-				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile recuperare prodotti random");
-				return;
-			}
-		}
-		
-		String path = "/WEB-INF/home.html";
-		response.setContentType("text");
+
+		String path = "/WEB-INF/ordini.html";
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-		ctx.setVariable("prodotti", prodotti);
+		ctx.setVariable("ordini", ordiniDaMostrare);
 		templateEngine.process(path, ctx, response.getWriter());
 	}
 
@@ -91,7 +81,7 @@ public class GoToHome extends HttpServlet{
 			throws ServletException, IOException {
 		doGet(request, response);
 	}
-
+	
 	public void destroy() {
 		try {
 			GestoreConnessione.closeConnection(connection);

@@ -83,7 +83,7 @@ public class ControllaLogin extends HttpServlet{
 		} else {
 			request.getSession().setAttribute("utente", usr);
 			request.getSession().setAttribute("listaVisualizzati", null);
-			path = getServletContext().getContextPath() + "/GoToHome";
+			path = getServletContext().getContextPath() + "/VisualizzaHome";
 			response.sendRedirect(path);
 		}
 	}

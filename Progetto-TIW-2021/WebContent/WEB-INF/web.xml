@@ -23,10 +23,13 @@
  </filter> 
  <filter-mapping> 
     <filter-name>ControlloAccesso</filter-name> 
-    <url-pattern>/GoToHome</url-pattern> 
-    <url-pattern>/GoToCarrello</url-pattern> 
-    <url-pattern>/GoToOrdini</url-pattern> 
-    <url-pattern>/GoToRisultati</url-pattern> 
+    <url-pattern>/VisualizzaHome</url-pattern> 
+    <url-pattern>/VisualizzaCarrello</url-pattern> 
+    <url-pattern>/AggiungiCarrello</url-pattern>
+    <url-pattern>/VisualizzaOrdini</url-pattern> 
+    <url-pattern>/AggiungiOrdine</url-pattern> 
+    <url-pattern>/CercaKeyword</url-pattern> 
+    <url-pattern>/CercaOfferte</url-pattern> 
     <url-pattern>/Logout</url-pattern> 
  </filter-mapping>
   <welcome-file-list>

@@ -16,11 +16,11 @@
 	<div>
 		<table class="barraMenu">
 			<tr>
-				<td><a href="GoToHome">Home</a></td>
-				<td>&emsp;<a href="GoToCarrello">Carrello</a></td>
-				<td>&emsp;<a href="GoToOrdini">Ordini</a></td>
+				<td><a href="VisualizzaHome">Home</a></td>
+				<td>&emsp;<a href="VisualizzaCarrello">Carrello</a></td>
+				<td>&emsp;<a href="VisualizzaOrdini">Ordini</a></td>
 				<td>
-					<form action="GoToRisultati" method="POST">
+					<form action="CercaKeyword" method="POST">
 						&emsp;Inserisci una parola chiave per la ricerca nel catalogo: 
 						<input type="text" name="keyword" id="keyword" required>
 						<input type="submit" value="Cerca">
@@ -33,12 +33,12 @@
 		<table class="tabellaCentrata">
 			<tr  th:each="p : ${prodotti}">
 				<td class="tdImmagine">
-					<a th:href="@{/GoToRisultati(idProdotto=${p.ID})}">
+					<a th:href="@{/CercaProdotto(idProdotto=${p.ID})}">
 						<img th:src="@{'data:image/jpg;base64,'+${p.immagine}}" th:alt="${p.nome}" class="immagineGrande" />
 					</a>
 				</td>
 				<td class="tdAlto">
-					<a th:href="@{/GoToRisultati(idProdotto=${p.ID})}">
+					<a th:href="@{/CercaProdotto(idProdotto=${p.ID})}">
 						<span th:text="${p.categoria}">Categoria</span><br><br>
 						<b><span th:text="${p.nome}">Nome prodotto</span></b> - 
 						<span th:text="${#numbers.formatDecimal(p.prezzo, 0, 'COMMA', 2, 'POINT')}">Prezzo</span> &euro;<br><br>

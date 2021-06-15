@@ -24,7 +24,7 @@
 				  Numero di prodotti già nel carrello: <span th:text="${product.quantita}"></span><br>
 				  Valore dei prodotti già nel carrello: 
 				  <span th:text="${product.valore} &gt; 0 ? ${#numbers.formatDecimal(product.valore, 0, 'COMMA', 2, 'POINT')} : '0.00'"></span> &euro;<br><br><br>
-				  <form action="GoToCarrello" method="POST" style="text-align: center;"> 
+				  <form action="AggiungiCarrello" method="POST" style="text-align: center;"> 
 			  			<input type="hidden" name="IdFor" th:value="${product.fornitore.ID}" required> 
 			  			<input type="hidden" name="IdProd" th:value="${product.ID}" required> 
 						<input type="number" name="quantita" id="quantita" min="1" style="width: 55px" required>

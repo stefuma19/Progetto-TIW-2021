@@ -22,7 +22,6 @@ import org.thymeleaf.context.WebContext;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
-import it.polimi.tiw.progetto.beans.Carrello;
 import it.polimi.tiw.progetto.beans.Prodotto;
 import it.polimi.tiw.progetto.beans.Utente;
 import it.polimi.tiw.progetto.dao.ProdottoDAO;
@@ -31,14 +30,14 @@ import it.polimi.tiw.progetto.utils.CookieParser;
 import it.polimi.tiw.progetto.utils.GestoreConnessione;
 import it.polimi.tiw.progetto.utils.IdException;
 
-@WebServlet("/GoToRisultati")
-public class GoToRisultati extends HttpServlet{
+
+@WebServlet("/CercaProdotto")
+public class CercaProdotto extends HttpServlet{
 	private static final long serialVersionUID = 1L;
 	private TemplateEngine templateEngine;
 	private Connection connection = null;
-	private List<Prodotto> prodotti = new ArrayList<Prodotto>();
 	
-	public GoToRisultati() {
+	public CercaProdotto() {
 		super();
 	}
 
@@ -52,49 +51,28 @@ public class GoToRisultati extends HttpServlet{
 		templateResolver.setSuffix(".html");
 	}
 	
+	@SuppressWarnings("unchecked")
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-
-		//HttpSession session = request.getSession();
-		//Utente usr = (Utente) session.getAttribute("utente");
-
-		ProdottoDAO prodottoDAO = new ProdottoDAO(connection);
-
-		List<Prodotto> offerte = new ArrayList<Prodotto>();
 		
-		if(request.getParameter("keyword") != null && !request.getParameter("keyword").equals("")) {
-			try {
-				prodotti = prodottoDAO.prendiProdottiByKeyword(request.getParameter("keyword"));
-			} catch (SQLException e) {
-				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile recuperare prodotti da keyword");
-				return;
-			}
-		}
-		String path = "/WEB-INF/risultati.html";
-		response.setContentType("text");
+		ProdottoDAO prodottoDAO = new ProdottoDAO(connection);
+		List<Prodotto> offerte = new ArrayList<Prodotto>();
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
 		
 		if(request.getParameter("idProdotto") != null) {
-			boolean presente = false;
-			for(Prodotto p : prodotti) {
-				if(p.getID() == Integer.parseInt(request.getParameter("idProdotto"))) {
-					presente = true;
-					break;
-				}
+			
+			List<Prodotto> listaProdotti = new ArrayList<>();
+			try {
+				listaProdotti.add(prodottoDAO.prendiProdottoById(Integer.parseInt(request.getParameter("idProdotto"))));
+				request.getSession().setAttribute("listaProdotti", listaProdotti);
+			}catch(SQLException e) {
+				e.printStackTrace();
+			}catch (IdException e) {
+				response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+				return;
 			}
 			
-			if(!presente) {
-				prodotti = new ArrayList<Prodotto>();
-				try {
-					prodotti.add(prodottoDAO.prendiProdottoById(Integer.parseInt(request.getParameter("idProdotto"))));
-				}catch(SQLException e) {
-					e.printStackTrace();
-				}catch (IdException e) {
-					response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
-					return;
-				}
-			}
 			int idProdotto = Integer.parseInt(request.getParameter("idProdotto"));
 			Queue<Integer> listaVisualizzati = new LinkedList<>();
 			HttpSession session = request.getSession();
@@ -163,11 +141,15 @@ public class GoToRisultati extends HttpServlet{
 				}
 			}
 		}
+		
+		List<Prodotto> prodotti = (List<Prodotto>)request.getSession().getAttribute("listaProdotti");
+		String path = "/WEB-INF/risultati.html";
+		response.setContentType("text");
 		ctx.setVariable("offerte", offerte);
 		ctx.setVariable("prodotti", prodotti);
 		templateEngine.process(path, ctx, response.getWriter());
 	}
-
+	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		doGet(request, response);
@@ -180,4 +162,5 @@ public class GoToRisultati extends HttpServlet{
 			e.printStackTrace();
 		}
 	}
+
 }

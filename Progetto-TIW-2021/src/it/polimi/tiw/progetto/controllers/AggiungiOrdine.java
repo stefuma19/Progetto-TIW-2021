@@ -16,27 +16,28 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.WebContext;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
-import it.polimi.tiw.progetto.utils.CalcoloCosti;
-import it.polimi.tiw.progetto.utils.CookieParser;
-import it.polimi.tiw.progetto.utils.GestoreConnessione;
-import it.polimi.tiw.progetto.utils.IdException;
-import it.polimi.tiw.progetto.beans.*;
+import it.polimi.tiw.progetto.beans.Ordine;
+import it.polimi.tiw.progetto.beans.Prodotto;
+import it.polimi.tiw.progetto.beans.Utente;
 import it.polimi.tiw.progetto.dao.FornitoreDAO;
 import it.polimi.tiw.progetto.dao.IndirizzoDAO;
 import it.polimi.tiw.progetto.dao.OrdineDAO;
 import it.polimi.tiw.progetto.dao.ProdottoDAO;
+import it.polimi.tiw.progetto.utils.CalcoloCosti;
+import it.polimi.tiw.progetto.utils.CookieParser;
+import it.polimi.tiw.progetto.utils.GestoreConnessione;
+import it.polimi.tiw.progetto.utils.IdException;
 
-@WebServlet("/GoToOrdini")
-public class GoToOrdini extends HttpServlet{
+@WebServlet("/AggiungiOrdine")
+public class AggiungiOrdine extends HttpServlet{
 	private static final long serialVersionUID = 1L;
 	private TemplateEngine templateEngine;
 	private Connection connection = null;
 
-	public GoToOrdini() {
+	public AggiungiOrdine() {
 		super();
 	}
 
@@ -53,7 +54,6 @@ public class GoToOrdini extends HttpServlet{
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		
-		List<Ordine> ordiniDaMostrare = new ArrayList<Ordine>();
 		OrdineDAO ordineDAO = new OrdineDAO(connection);
 		ProdottoDAO prodottoDAO= new ProdottoDAO(connection);
 		FornitoreDAO fornitoreDAO= new FornitoreDAO(connection);
@@ -124,29 +124,11 @@ public class GoToOrdini extends HttpServlet{
 				return;
 			}
 			
-			response.sendRedirect(getServletContext().getContextPath() + "/GoToOrdini");
+			response.sendRedirect(getServletContext().getContextPath() + "/VisualizzaOrdini");
 		}
 		
-		//mostro tutti gli ordini presi dal db
-
-		try {
-			ordiniDaMostrare = ordineDAO.prendiOrdiniByIdUtente(((Utente)s.getAttribute("utente")).getId());
-		}catch(SQLException e) {
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile prendere ordine by id utente");
-			e.printStackTrace();
-		}catch (IdException e) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
-			return;
-		}
-		
-
-		String path = "/WEB-INF/ordini.html";
-		ServletContext servletContext = getServletContext();
-		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-		ctx.setVariable("ordini", ordiniDaMostrare);
-		templateEngine.process(path, ctx, response.getWriter());
 	}
-
+	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		doGet(request, response);
@@ -159,4 +141,5 @@ public class GoToOrdini extends HttpServlet{
 			e.printStackTrace();
 		}
 	}
+
 }
