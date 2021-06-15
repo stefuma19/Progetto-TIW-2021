@@ -205,6 +205,7 @@ public class ProdottoDAO {
 		}
 		return prodotto;
 	}
+	
 	public boolean esisteProdotto(int idProd) throws SQLException {
 		String query = "select * from prodotto p where p.Id = ?"; 
 		try (PreparedStatement pstatement = connection.prepareStatement(query);) {
