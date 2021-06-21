@@ -53,6 +53,10 @@ public class OrdineDAO {
 		ProdottoDAO prodottoDAO = new ProdottoDAO(connection);
 		IndirizzoDAO indirizzoDAO = new IndirizzoDAO(connection);
 		
+		Date data = new Date();
+		int IdFornitore = -1;
+		int IdIndirizzo = -1;
+		
 		for(Integer idOrdine : idOrdini) {
 
 			Ordine ordine = new Ordine();
@@ -69,11 +73,15 @@ public class OrdineDAO {
 								Integer.parseInt(result.getString("IdFornitore")));
 						prodotto.setQuantita(Integer.parseInt(result.getString("Quantita")));
 						prodotti.add(prodotto);
-
-						ordine.setData(result.getDate("Data"));
-						ordine.setFornitore(fornitoreDAO.prendiFornitoreById(Integer.parseInt(result.getString("IdFornitore"))));
-						ordine.setIndirizzo(indirizzoDAO.prendiIndirizzoById(Integer.parseInt(result.getString("IdIndirizzo"))));
+						
+						data = result.getDate("Data");
+						IdFornitore = Integer.parseInt(result.getString("IdFornitore"));
+						IdIndirizzo = Integer.parseInt(result.getString("IdIndirizzo"));
 					}
+					
+					ordine.setData(data);
+					ordine.setFornitore(fornitoreDAO.prendiFornitoreById(IdFornitore));
+					ordine.setIndirizzo(indirizzoDAO.prendiIndirizzoById(IdIndirizzo));
 					ordine.setId(idOrdine);
 					ordine.setProdotti(prodotti);
 					ordine.setTotale(CalcoloCosti.calcolaTotale(prodotti, ordine.getFornitore()));
