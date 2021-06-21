@@ -57,7 +57,7 @@ public class VisualizzaCarrello extends HttpServlet{
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		
-		List<Carrello> daMostrare = new ArrayList<Carrello>();
+		List<Carrello> carrelliDaMostrare = new ArrayList<Carrello>();
 		ProdottoDAO prodottoDAO = new ProdottoDAO(connection);
 		FornitoreDAO fornitoreDAO = new FornitoreDAO(connection);
 		
@@ -65,7 +65,7 @@ public class VisualizzaCarrello extends HttpServlet{
 		
 		HttpSession s = request.getSession(); 
 		Cookie[] cookies = request.getCookies();
-		List<Prodotto> prodotti = new ArrayList<>();
+		List<Prodotto> prodottiCarrello = new ArrayList<>();
 		
 		if (cookies != null) {  //se ho dei cookie 
 			for (int i = 0; i < cookies.length; i++) { //TODO: x evitare il cookie JSESSIONID?
@@ -83,8 +83,8 @@ public class VisualizzaCarrello extends HttpServlet{
 							response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
 							return;
 						}
-						prodotti = CookieParser.parseCookie(cookies[i]);
-						for(Prodotto p : prodotti) {  //prendo info prodotto e le aggiungo al carrello creato in precedenza
+						prodottiCarrello = CookieParser.parseCookie(cookies[i]);
+						for(Prodotto p : prodottiCarrello) {  //prendo info prodotto e le aggiungo al carrello creato in precedenza
 							try {
 								Prodotto daAggiungere = prodottoDAO.prendiProdottoByIdProdottoFornitore(p.getID(),p.getFornitore().getID());
 								daAggiungere.setQuantita(p.getQuantita());
@@ -98,13 +98,13 @@ public class VisualizzaCarrello extends HttpServlet{
 							}
 						}
 						carrello.setProdotti(listaForn);
-						daMostrare.add(carrello);
+						carrelliDaMostrare.add(carrello);
 					}
 				}
 			}
 		}
 		
-		for(Carrello c : daMostrare) {
+		for(Carrello c : carrelliDaMostrare) {
 			c.setCostoSpedizione(CalcoloCosti.calcolaCostiSpedizione(c.getProdotti(), c.getFornitore()));
 			c.setTotaleCosto(CalcoloCosti.calcolaPrezzo(c.getProdotti()));
 		}
@@ -113,7 +113,7 @@ public class VisualizzaCarrello extends HttpServlet{
 		String path = "/WEB-INF/carrello.html";
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-		ctx.setVariable("fornitori", daMostrare);
+		ctx.setVariable("fornitori", carrelliDaMostrare);
 		templateEngine.process(path, ctx, response.getWriter());
 		
 	}
