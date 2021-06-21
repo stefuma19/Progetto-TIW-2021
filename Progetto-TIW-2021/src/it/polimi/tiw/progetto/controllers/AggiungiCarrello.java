@@ -71,7 +71,7 @@ public class AggiungiCarrello extends HttpServlet{
 				String nome = c.getName();
 				if(nome.equals(((Utente)s.getAttribute("utente")).getId()+"-"+request.getParameter("IdFor"))) {
 					primo = false;
-					String valore = c.getValue(); //TODO: controllo se ho già comprato quel prodotto e ne aumento solo la quantita, serve il parser
+					String valore = c.getValue(); //TODO: controllo se ho già comprato quel prodotto e ne aumento solo la quantita, serve il parser, testare
 					List<Prodotto> prodottiPresenti = CookieParser.parseCookie(c);
 					boolean presente = false;
 					for(Prodotto p: prodottiPresenti) {

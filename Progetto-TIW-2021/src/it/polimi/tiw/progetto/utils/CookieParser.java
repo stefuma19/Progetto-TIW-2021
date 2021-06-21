@@ -61,8 +61,8 @@ public class CookieParser {
 				valore += ((primo)? "" : "_") + p.getID() + "-" + p.getQuantita();
 				primo = false;
 			}
-			Cookie c = new Cookie(nome,valore);
-			return c;
+			Cookie cookie = new Cookie(nome,valore);
+			return cookie;
 		}else {
 			return null;
 		}

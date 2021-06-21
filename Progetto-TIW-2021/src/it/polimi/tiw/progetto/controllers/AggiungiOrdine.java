@@ -78,7 +78,7 @@ public class AggiungiOrdine extends HttpServlet{
 			}
 			int idFor = Integer.parseInt(request.getParameter("idForn"));
 			int idUtente = (((Utente)s.getAttribute("utente")).getId());
-			List<Prodotto> mieiProdotti = new ArrayList<Prodotto>();
+			List<Prodotto> prodottiUtente = new ArrayList<Prodotto>();
 			float totale = -1;
 			int idInd = -1;
 			
@@ -90,7 +90,7 @@ public class AggiungiOrdine extends HttpServlet{
 				try {
 					Prodotto daAggiungere = prodottoDAO.prendiProdottoByIdProdottoFornitore(p.getID(),p.getFornitore().getID());
 					daAggiungere.setQuantita(p.getQuantita());
-					mieiProdotti.add(daAggiungere);
+					prodottiUtente.add(daAggiungere);
 				} catch (SQLException e) {
 					response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile recuperare prodotti da id prodotto e id fornitore");
 					return;
@@ -101,7 +101,7 @@ public class AggiungiOrdine extends HttpServlet{
 			}
 			
 			try {  //calcolo costi dell'ordine
-				totale = CalcoloCosti.calcolaTotale(mieiProdotti, fornitoreDAO.prendiFornitoreById(idFor));
+				totale = CalcoloCosti.calcolaTotale(prodottiUtente, fornitoreDAO.prendiFornitoreById(idFor));
 			}catch (SQLException e) {
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile recuperare fornitore da ID");
 				return;
@@ -118,7 +118,7 @@ public class AggiungiOrdine extends HttpServlet{
 			}
 			
 			try {  //aggiunta ordine nel db
-				ordineDAO.aggiungiOrdine(totale, idInd, idUtente, idFor, mieiProdotti);
+				ordineDAO.aggiungiOrdine(totale, idInd, idUtente, idFor, prodottiUtente);
 			}catch (SQLException e) {
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile aggiungere ordine");
 				return;
