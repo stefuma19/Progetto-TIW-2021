@@ -130,26 +130,26 @@ public class CercaOfferte extends HttpServlet{
 						mieiProdotti = new ArrayList<Prodotto>();
 						
 						if(!cookies[i].getName().equals("JSESSIONID")) {
-							if(cookies[i].getName().split("-")[0].equals(String.valueOf((((Utente)s.getAttribute("utente")).getId()))))
+							if(cookies[i].getName().split("-")[0].equals(String.valueOf((((Utente)s.getAttribute("utente")).getId())))
+									&& cookies[i].getName().split("-")[1].equals(String.valueOf(idForn)))
 							{
-								if(cookies[i].getName().split("-")[1].equals(String.valueOf(idForn))) {
-									prodotti = CookieParser.parseCookie(cookies[i]);
-									for(Prodotto p : prodotti) {
-										try {
-											Prodotto daAggiungere = prodottoDAO.prendiProdottoByIdProdottoFornitore(p.getID(),p.getFornitore().getID());
-											daAggiungere.setQuantita(p.getQuantita());
-											mieiProdotti.add(daAggiungere);
-										} catch (SQLException e) {
-											response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile recuperare prodotti da cookie info");
-											return;
-										}catch (IdException e) {
-											response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
-											return;
-										}
+								prodotti = CookieParser.parseCookie(cookies[i]);
+								for(Prodotto p : prodotti) {
+									try {
+										Prodotto daAggiungere = prodottoDAO.prendiProdottoByIdProdottoFornitore(p.getID(),p.getFornitore().getID());
+										daAggiungere.setQuantita(p.getQuantita());
+										mieiProdotti.add(daAggiungere);
+									} catch (SQLException e) {
+										response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile recuperare prodotti da cookie info");
+										return;
+									}catch (IdException e) {
+										response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+										return;
 									}
-									o.setValore(CalcoloCosti.calcolaPrezzo(mieiProdotti));
-									o.setQuantita(CalcoloCosti.calcolaNumeroProdotti(mieiProdotti));
 								}
+								o.setValore(CalcoloCosti.calcolaPrezzo(mieiProdotti));
+								o.setQuantita(CalcoloCosti.calcolaNumeroProdotti(mieiProdotti));
+							
 							}
 						}
 					}

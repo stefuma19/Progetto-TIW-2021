@@ -49,7 +49,7 @@
 .testoDx{
 	text-align: right;
 }
-table.logUtente a:link, a:visited {
+table.logUtente a{
       text-decoration: none;
       color: blue;
  }
@@ -64,7 +64,7 @@ table.tabellaLogin input[type=submit]{
 table.tabellaLogin td[colspan="2"] {
 	text-align: center;
 }
-table.barraMenu a:link, a:visited {
+table.barraMenu a{
       text-decoration: none;
       color: blue;
  }
