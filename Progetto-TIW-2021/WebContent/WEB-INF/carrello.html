@@ -54,16 +54,17 @@
 						</tr>
 						<tr class="testoDx">
 							<td colspan="2"><span>Spedizione:</span></td>
-							<td><span th:text="${f.costoSpedizione} &gt; 0 ? ${#numbers.formatDecimal(product.valore, 0, 'COMMA', 2, 'POINT')} : '0.00'"></span> &euro;</td>
+							<td><span th:text="${f.costoSpedizione} &gt; 0 ? ${#numbers.formatDecimal(f.costoSpedizione, 0, 'COMMA', 2, 'POINT')} : '0.00'"></span> &euro;</td>
 						</tr>
 						<tr>
 							<td colspan="3">
-								<form th:action="@{/AggiungiOrdine(idForn=${f.fornitore.ID})}" method="POST">
+								<form th:action="AggiungiOrdine" method="POST">
 									<table style="width: 100%; text-align: right; margin-top: 10px;">
 										<tr><td>Città:</td><td style="width:30%;"><input type="text" name="citta" th:value="${session.utente.indirizzo.citta}" id="citta" required></td></tr>
 										<tr><td>Via:</td><td><input type="text" name="via" th:value="${session.utente.indirizzo.via}" id="via" required></td></tr>
 										<tr><td>Numero:</td><td><input type="text" name="numero" th:value="${session.utente.indirizzo.numero}" id="numero" required></td></tr>
 										<tr><td>CAP:</td><td><input type="text" name="cap" th:value="${session.utente.indirizzo.cap}" id="cap" required></td></tr>
+										<tr><td><input type="hidden" name="idForn" th:value="${f.fornitore.ID}" id="idForn"></td></tr>
 										<tr>
 											<td colspan="2">
 												<input type="submit" value="ORDINA">
