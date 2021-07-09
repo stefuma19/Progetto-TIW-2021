@@ -22,6 +22,7 @@ import it.polimi.tiw.progetto.beans.Prodotto;
 import it.polimi.tiw.progetto.beans.Utente;
 import it.polimi.tiw.progetto.dao.FornitoreDAO;
 import it.polimi.tiw.progetto.dao.ProdottoDAO;
+import it.polimi.tiw.progetto.utils.CalcoloCosti;
 import it.polimi.tiw.progetto.utils.CookieParser;
 import it.polimi.tiw.progetto.utils.GestoreConnessione;
 
@@ -65,6 +66,10 @@ public class AggiungiCarrello extends HttpServlet{
 		HttpSession s = request.getSession(); 
 		if(Integer.parseInt(request.getParameter("quantita")) < 1){
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Quantità selezionata minore o uguale a 0");
+			return;
+		}else if (Integer.parseInt(request.getParameter("quantita")) > 999) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "La quantità di prodotti nel carrello non può superare le 999 unità");
+			return;
 		}else if (cookies != null) {
 			for (int i = 0; i < cookies.length; i++) {
 				Cookie c = cookies[i];
@@ -73,28 +78,33 @@ public class AggiungiCarrello extends HttpServlet{
 					primo = false;
 					String valore = c.getValue(); //TODO: controllo se ho già comprato quel prodotto e ne aumento solo la quantita, serve il parser, testare
 					List<Prodotto> prodottiPresenti = CookieParser.parseCookie(c);
-					boolean presente = false;
-					for(Prodotto p: prodottiPresenti) {
-						if(p.getID() == Integer.parseInt(request.getParameter("IdProd"))) {
-							p.setQuantita(p.getQuantita() + Integer.parseInt(request.getParameter("quantita")));  //TODO: lavora per copia? LB19
-							presente = true;
-						}
-					}
-					if(presente) {
-						Cookie coo = CookieParser.creaCookieByProdotti(prodottiPresenti, request);
-						coo.setMaxAge(3600);
-						response.addCookie(coo);
+					if(CalcoloCosti.calcolaNumeroProdotti(prodottiPresenti) + Integer.parseInt(request.getParameter("quantita")) > 999) {
+						response.sendError(HttpServletResponse.SC_BAD_REQUEST, "La quantità di prodotti nel carrello non può superare le 999 unità");
+						return;
 					}else {
-						valore += "_" + request.getParameter("IdProd") + "-" + request.getParameter("quantita");
-						Cookie coo = new Cookie(nome, valore);
-						coo.setMaxAge(3600);
-						response.addCookie(coo);
+						boolean presente = false;
+						for(Prodotto p: prodottiPresenti) {
+							if(p.getID() == Integer.parseInt(request.getParameter("IdProd"))) {
+								p.setQuantita(p.getQuantita() + Integer.parseInt(request.getParameter("quantita")));
+								presente = true;
+							}
+						}
+						if(presente) {
+							Cookie coo = CookieParser.creaCookieByProdotti(prodottiPresenti, request);
+							coo.setMaxAge(3600);
+							response.addCookie(coo);
+						}else {
+							valore += "_" + request.getParameter("IdProd") + "-" + request.getParameter("quantita");
+							Cookie coo = new Cookie(nome, valore);
+							coo.setMaxAge(3600);
+							response.addCookie(coo);
+						}
+						break;
 					}
-					break;
 				}
 			}
 		}
-
+		
 		if(primo) {
 			String idFor = request.getParameter("IdFor");
 			String nome = ((Utente)s.getAttribute("utente")).getId() + "-" + idFor;
