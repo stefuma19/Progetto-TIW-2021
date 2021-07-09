@@ -27,7 +27,7 @@
 				  <form action="AggiungiCarrello" method="POST" style="text-align: center;"> 
 			  			<input type="hidden" name="IdFor" th:value="${product.fornitore.ID}" required> 
 			  			<input type="hidden" name="IdProd" th:value="${product.ID}" required> 
-						<input type="number" name="quantita" id="quantita" min="1" style="width: 55px" required>
+						<input type="number" name="quantita" id="quantita" min="1" th:max="999 - ${product.quantita}" style="width: 55px" required>
 						<input type="submit" value="Inserisci">
 				  </form>
 			  </td>
