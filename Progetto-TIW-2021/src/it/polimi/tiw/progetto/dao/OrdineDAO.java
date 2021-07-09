@@ -1,23 +1,15 @@
 package it.polimi.tiw.progetto.dao;
 
-import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import it.polimi.tiw.progetto.beans.Carrello;
-import it.polimi.tiw.progetto.beans.Fornitore;
 import it.polimi.tiw.progetto.beans.Ordine;
 import it.polimi.tiw.progetto.beans.Prodotto;
-import it.polimi.tiw.progetto.beans.Range;
 import it.polimi.tiw.progetto.utils.CalcoloCosti;
 import it.polimi.tiw.progetto.utils.IdException;
 

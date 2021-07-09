@@ -23,9 +23,8 @@ public class ControlloAccesso implements Filter{
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 
-		System.out.print("Login checker filter executing ...\n"); 
+		System.out.print("Controllo accesso\n"); 
 
-		// java.lang.String loginpath = "/index.html";
 		HttpServletRequest req = (HttpServletRequest) request;
 		HttpServletResponse res = (HttpServletResponse) response;
 		String loginpath = req.getServletContext().getContextPath() + "/login.html";

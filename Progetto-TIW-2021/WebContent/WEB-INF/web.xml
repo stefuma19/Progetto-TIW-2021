@@ -30,6 +30,7 @@
     <url-pattern>/AggiungiOrdine</url-pattern> 
     <url-pattern>/CercaKeyword</url-pattern> 
     <url-pattern>/CercaOfferte</url-pattern> 
+    <url-pattern>/CercaProdotto</url-pattern> 
     <url-pattern>/Logout</url-pattern> 
  </filter-mapping>
   <welcome-file-list>
