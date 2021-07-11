@@ -110,11 +110,9 @@ public class ProdottoDAO {
 		List<Prodotto> prodotti = new ArrayList<Prodotto>();
 		FornitoreDAO fornitoreDAO = new FornitoreDAO(connection);
 		
-		String query = "select * from prodotto pr, vendita v, fornitore f, politica po "
-				+ "where pr.Id=v.IdProdotto and v.IdFornitore=f.Id and po.Id=f.IdPoliticaForn and pr.Id = ? "
+		String query = "select * from prodotto pr, vendita v, fornitore f "
+				+ "where pr.Id=v.IdProdotto and v.IdFornitore=f.Id and pr.Id = ? "
 				+ "order by Prezzo"; 
-		
-		//TODO: implemento questa query per ottenere i vari range:
 		
 		try (PreparedStatement pstatement = connection.prepareStatement(query);) {
 			pstatement.setInt(1, ID);
@@ -146,8 +144,8 @@ public class ProdottoDAO {
 	public Prodotto prendiProdottoByIdProdottoFornitore(int idProdotto, int idFornitore) throws SQLException, IdException{
 		FornitoreDAO fornitoreDAO = new FornitoreDAO(connection);
 		Prodotto prodotto = new Prodotto();
-		String query = "select * from prodotto pr, vendita v, fornitore f, politica po "
-				+ "where pr.Id=v.IdProdotto and v.IdFornitore=f.Id and po.Id=f.IdPoliticaForn and pr.Id = ? and f.Id= ? "
+		String query = "select * from prodotto pr, vendita v, fornitore f "
+				+ "where pr.Id=v.IdProdotto and v.IdFornitore=f.Id and pr.Id = ? and f.Id= ? "
 				+ "order by Prezzo"; 
 
 		
