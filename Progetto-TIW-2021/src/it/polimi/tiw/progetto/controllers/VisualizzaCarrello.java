@@ -17,17 +17,13 @@ import javax.servlet.http.HttpSession;
 
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
-import org.thymeleaf.standard.serializer.StandardJavaScriptSerializer;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
-
-import com.mysql.cj.Session;
 
 import it.polimi.tiw.progetto.beans.Carrello;
 import it.polimi.tiw.progetto.beans.Prodotto;
 import it.polimi.tiw.progetto.beans.Utente;
 import it.polimi.tiw.progetto.dao.FornitoreDAO;
-import it.polimi.tiw.progetto.dao.OrdineDAO;
 import it.polimi.tiw.progetto.dao.ProdottoDAO;
 import it.polimi.tiw.progetto.utils.CalcoloCosti;
 import it.polimi.tiw.progetto.utils.CookieParser;
@@ -68,7 +64,7 @@ public class VisualizzaCarrello extends HttpServlet{
 		List<Prodotto> prodottiCarrello = new ArrayList<>();
 		
 		if (cookies != null) {  //se ho dei cookie 
-			for (int i = 0; i < cookies.length; i++) { //TODO: x evitare il cookie JSESSIONID?
+			for (int i = 0; i < cookies.length; i++) { 
 				List<Prodotto> listaForn = new ArrayList<Prodotto>();
 				if(!cookies[i].getName().equals("JSESSIONID")) {
 					if(cookies[i].getName().split("-")[0].equals(String.valueOf((((Utente)s.getAttribute("utente")).getId()))))

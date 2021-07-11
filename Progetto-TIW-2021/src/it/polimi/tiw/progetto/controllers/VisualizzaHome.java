@@ -22,7 +22,6 @@ import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 import it.polimi.tiw.progetto.beans.Prodotto;
-import it.polimi.tiw.progetto.beans.Utente;
 import it.polimi.tiw.progetto.dao.ProdottoDAO;
 import it.polimi.tiw.progetto.utils.GestoreConnessione;
 import it.polimi.tiw.progetto.utils.IdException;

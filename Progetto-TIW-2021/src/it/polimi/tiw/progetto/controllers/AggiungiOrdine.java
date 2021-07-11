@@ -19,7 +19,6 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
-import it.polimi.tiw.progetto.beans.Ordine;
 import it.polimi.tiw.progetto.beans.Prodotto;
 import it.polimi.tiw.progetto.beans.Utente;
 import it.polimi.tiw.progetto.dao.FornitoreDAO;
@@ -84,7 +83,7 @@ public class AggiungiOrdine extends HttpServlet{
 			
 			List<Prodotto> prodotti = CookieParser.prendiProdottiByIdFornitoreUtente(idUtente,idFor,request.getCookies()); //prendo info da cookie
 			Cookie c = new Cookie(String.valueOf(idUtente) + "-" + String.valueOf(idFor),"");
-			c.setMaxAge(0);
+			c.setMaxAge(0); //per eliminare cookie
 			response.addCookie(c);
 			for(Prodotto p : prodotti) {  //prendo informazioni prodotto da cookie
 				try {
@@ -125,6 +124,9 @@ public class AggiungiOrdine extends HttpServlet{
 			}
 			
 			response.sendRedirect(getServletContext().getContextPath() + "/VisualizzaOrdini");
+		} else {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parametro mancante");
+			return;
 		}
 		
 	}

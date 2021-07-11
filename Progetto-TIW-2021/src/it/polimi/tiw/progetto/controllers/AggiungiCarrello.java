@@ -51,71 +51,84 @@ public class AggiungiCarrello extends HttpServlet{
 		
 		ProdottoDAO prodottoDAO = new ProdottoDAO(connection);
 		FornitoreDAO fornitoreDAO = new FornitoreDAO(connection);
-		try {
-			if(!prodottoDAO.esisteProdotto(Integer.parseInt(request.getParameter("IdProd"))) || 
-					!fornitoreDAO.esisteFornitore(Integer.parseInt(request.getParameter("IdFor")))) {
-				response.sendError(HttpServletResponse.SC_BAD_REQUEST, "L'ID a cui si sta tentando di accedere non esiste");
+		
+		if(request.getParameter("IdFor") != null && request.getParameter("IdProd") != null) {
+			
+			try {
+				if(!prodottoDAO.esisteProdotto(Integer.parseInt(request.getParameter("IdProd"))) || 
+						!fornitoreDAO.esisteFornitore(Integer.parseInt(request.getParameter("IdFor")))) {
+					response.sendError(HttpServletResponse.SC_BAD_REQUEST, "L'ID a cui si sta tentando di accedere non esiste");
+					return;
+				}
+			}catch(SQLException e) {
+				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile aggiungere a carrello per Id fornitore");
 				return;
 			}
-		}catch(SQLException e) {
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile aggiungere a carrello per Id fornitore");
-			return;
-		}
-		boolean primo=true;  //se dobbiamo creare un cookie per il fornitore
-		Cookie[] cookies = request.getCookies();
-		HttpSession s = request.getSession(); 
-		if(Integer.parseInt(request.getParameter("quantita")) < 1){
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Quantità selezionata minore o uguale a 0");
-			return;
-		}else if (Integer.parseInt(request.getParameter("quantita")) > 999) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "La quantità di prodotti nel carrello non può superare le 999 unità");
-			return;
-		}else if (cookies != null) {
-			for (int i = 0; i < cookies.length; i++) {
-				Cookie c = cookies[i];
-				String nome = c.getName();
-				if(nome.equals(((Utente)s.getAttribute("utente")).getId()+"-"+request.getParameter("IdFor"))) {
-					primo = false;
-					String valore = c.getValue(); //TODO: controllo se ho già comprato quel prodotto e ne aumento solo la quantita, serve il parser, testare
-					List<Prodotto> prodottiPresenti = CookieParser.parseCookie(c);
-					if(CalcoloCosti.calcolaNumeroProdotti(prodottiPresenti) + Integer.parseInt(request.getParameter("quantita")) > 999) {
-						response.sendError(HttpServletResponse.SC_BAD_REQUEST, "La quantità di prodotti nel carrello non può superare le 999 unità");
+			
+			if(request.getParameter("quantita")==null || request.getParameter("quantita")=="") {
+						response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Campo quantità assente");
 						return;
-					}else {
-						boolean presente = false;
-						for(Prodotto p: prodottiPresenti) {
-							if(p.getID() == Integer.parseInt(request.getParameter("IdProd"))) {
-								p.setQuantita(p.getQuantita() + Integer.parseInt(request.getParameter("quantita")));
-								presente = true;
+			}
+			
+			boolean primo=true;  //se dobbiamo creare un cookie per il fornitore
+			Cookie[] cookies = request.getCookies();
+			HttpSession s = request.getSession(); 
+			if(Integer.parseInt(request.getParameter("quantita")) < 1){
+				response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Quantità selezionata minore o uguale a 0");
+				return;
+			}else if (Integer.parseInt(request.getParameter("quantita")) > 999) {
+				response.sendError(HttpServletResponse.SC_BAD_REQUEST, "La quantità di prodotti nel carrello non può superare le 999 unità");
+				return;
+			}else if (cookies != null) {
+				for (int i = 0; i < cookies.length; i++) {
+					Cookie c = cookies[i];
+					String nome = c.getName();
+					if(nome.equals(((Utente)s.getAttribute("utente")).getId()+"-"+request.getParameter("IdFor"))) {
+						primo = false;
+						String valore = c.getValue(); 
+						List<Prodotto> prodottiPresenti = CookieParser.parseCookie(c); 
+						if(CalcoloCosti.calcolaNumeroProdotti(prodottiPresenti) + Integer.parseInt(request.getParameter("quantita")) > 999) {
+							response.sendError(HttpServletResponse.SC_BAD_REQUEST, "La quantità di prodotti nel carrello non può superare le 999 unità");
+							return;
+						}else { //controllo se ho già aggiunto quel prodotto e ne aumento solo la quantità
+							boolean presente = false;
+							for(Prodotto p: prodottiPresenti) {
+								if(p.getID() == Integer.parseInt(request.getParameter("IdProd"))) {
+									p.setQuantita(p.getQuantita() + Integer.parseInt(request.getParameter("quantita")));
+									presente = true;
+									break;
+								}
+							} 
+							if(presente) {
+								Cookie coo = CookieParser.creaCookieByProdotti(prodottiPresenti, request);
+								coo.setMaxAge(3600);
+								response.addCookie(coo);
+							}else {
+								valore += "_" + request.getParameter("IdProd") + "-" + request.getParameter("quantita");
+								Cookie coo = new Cookie(nome, valore);
+								coo.setMaxAge(3600);
+								response.addCookie(coo);
 							}
+							break;
 						}
-						if(presente) {
-							Cookie coo = CookieParser.creaCookieByProdotti(prodottiPresenti, request);
-							coo.setMaxAge(3600);
-							response.addCookie(coo);
-						}else {
-							valore += "_" + request.getParameter("IdProd") + "-" + request.getParameter("quantita");
-							Cookie coo = new Cookie(nome, valore);
-							coo.setMaxAge(3600);
-							response.addCookie(coo);
-						}
-						break;
 					}
 				}
 			}
-		}
-		
-		if(primo) {
-			String idFor = request.getParameter("IdFor");
-			String nome = ((Utente)s.getAttribute("utente")).getId() + "-" + idFor;
-			String valore = request.getParameter("IdProd") + "-" + request.getParameter("quantita");
-			Cookie coo = new Cookie(nome, valore);
-			coo.setMaxAge(3600);
-			response.addCookie(coo);
-		}
-
-		response.sendRedirect(getServletContext().getContextPath() + "/VisualizzaCarrello");
+			
+			if(primo) {
+				String idFor = request.getParameter("IdFor");
+				String nome = ((Utente)s.getAttribute("utente")).getId() + "-" + idFor;
+				String valore = request.getParameter("IdProd") + "-" + request.getParameter("quantita");
+				Cookie coo = new Cookie(nome, valore);
+				coo.setMaxAge(3600);
+				response.addCookie(coo);
+			}
 	
+			response.sendRedirect(getServletContext().getContextPath() + "/VisualizzaCarrello");
+		} else {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parametri mancanti");
+			return;
+		}
 	}
 	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)

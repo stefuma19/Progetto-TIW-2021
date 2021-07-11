@@ -61,10 +61,11 @@ public class CercaProdotto extends HttpServlet{
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
 		
 		if(request.getParameter("idProdotto") != null) {
-			
+
+			int idProdotto = Integer.parseInt(request.getParameter("idProdotto"));
 			List<Prodotto> listaProdotti = new ArrayList<>();
 			try {
-				listaProdotti.add(prodottoDAO.prendiProdottoById(Integer.parseInt(request.getParameter("idProdotto"))));
+				listaProdotti.add(prodottoDAO.prendiProdottoById(idProdotto));
 				request.getSession().setAttribute("listaProdotti", listaProdotti);
 			}catch(SQLException e) {
 				e.printStackTrace();
@@ -73,7 +74,6 @@ public class CercaProdotto extends HttpServlet{
 				return;
 			}
 			
-			int idProdotto = Integer.parseInt(request.getParameter("idProdotto"));
 			Queue<Integer> listaVisualizzati = new LinkedList<>();
 			HttpSession session = request.getSession();
 			if (session.getAttribute("listaVisualizzati") == null) {
@@ -92,7 +92,7 @@ public class CercaProdotto extends HttpServlet{
 			ctx.setVariable("idDaMostrare", request.getParameter("idProdotto")); 
 			
 			try {
-				offerte = prodottoDAO.prendiOfferteByIdProdotto(Integer.parseInt(request.getParameter("idProdotto")));
+				offerte = prodottoDAO.prendiOfferteByIdProdotto(idProdotto);
 			} catch (SQLException e) {
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile recuperare prodotti da id");
 				return;
@@ -107,10 +107,10 @@ public class CercaProdotto extends HttpServlet{
 			List<Prodotto> prodottiOfferta = new ArrayList<Prodotto>();
 			for(Prodotto o : offerte) {
 				int idForn = o.getFornitore().getID();
-				o.setValore(0);
-				o.setQuantita(0);
+				o.setValore(0); //spesa totale del fornitore nel carrello
+				o.setQuantita(0); //# prodotti totale del fornitore nel carrello
 				if (cookies != null) {
-					for (int i = 0; i < cookies.length; i++) { //TODO: x evitare il cookie JSESSIONID?
+					for (int i = 0; i < cookies.length; i++) {
 						
 						prodottiOfferta = new ArrayList<Prodotto>();
 						
@@ -140,6 +140,9 @@ public class CercaProdotto extends HttpServlet{
 					}
 				}
 			}
+		} else {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parametro mancante");
+			return;
 		}
 		
 		List<Prodotto> prodotti = (List<Prodotto>)request.getSession().getAttribute("listaProdotti");

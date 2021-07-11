@@ -61,7 +61,6 @@ public class CercaOfferte extends HttpServlet{
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
 		
 
-		@SuppressWarnings("unchecked")
 		List<Prodotto> listaProdotti = (List<Prodotto>)request.getSession().getAttribute("listaProdotti");
 		
 		if(request.getParameter("idProdotto") != null) {
@@ -119,15 +118,15 @@ public class CercaOfferte extends HttpServlet{
 			HttpSession s = request.getSession(); 
 			Cookie[] cookies = request.getCookies();
 			List<Prodotto> prodotti = new ArrayList<Prodotto>();
-			List<Prodotto> mieiProdotti = new ArrayList<Prodotto>();
+			List<Prodotto> prodottiCarrello = new ArrayList<Prodotto>();
 			for(Prodotto o : offerte) {
 				int idForn = o.getFornitore().getID();
 				o.setValore(0);
 				o.setQuantita(0);
 				if (cookies != null) {
-					for (int i = 0; i < cookies.length; i++) { //TODO: x evitare il cookie JSESSIONID?
+					for (int i = 0; i < cookies.length; i++) { 
 						
-						mieiProdotti = new ArrayList<Prodotto>();
+						prodottiCarrello = new ArrayList<Prodotto>();
 						
 						if(!cookies[i].getName().equals("JSESSIONID")) {
 							if(cookies[i].getName().split("-")[0].equals(String.valueOf((((Utente)s.getAttribute("utente")).getId())))
@@ -138,7 +137,7 @@ public class CercaOfferte extends HttpServlet{
 									try {
 										Prodotto daAggiungere = prodottoDAO.prendiProdottoByIdProdottoFornitore(p.getID(),p.getFornitore().getID());
 										daAggiungere.setQuantita(p.getQuantita());
-										mieiProdotti.add(daAggiungere);
+										prodottiCarrello.add(daAggiungere);
 									} catch (SQLException e) {
 										response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile recuperare prodotti da cookie info");
 										return;
@@ -147,14 +146,17 @@ public class CercaOfferte extends HttpServlet{
 										return;
 									}
 								}
-								o.setValore(CalcoloCosti.calcolaPrezzo(mieiProdotti));
-								o.setQuantita(CalcoloCosti.calcolaNumeroProdotti(mieiProdotti));
+								o.setValore(CalcoloCosti.calcolaPrezzo(prodottiCarrello));
+								o.setQuantita(CalcoloCosti.calcolaNumeroProdotti(prodottiCarrello));
 							
 							}
 						}
 					}
 				}
 			}
+		} else {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parametro mancante");
+			return;
 		}
 		
 		List<Prodotto> prodotti = (List<Prodotto>)request.getSession().getAttribute("listaProdotti");

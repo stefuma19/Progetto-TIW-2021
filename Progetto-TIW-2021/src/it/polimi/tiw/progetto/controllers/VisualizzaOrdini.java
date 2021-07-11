@@ -9,7 +9,6 @@ import java.util.List;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,15 +19,10 @@ import org.thymeleaf.context.WebContext;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
-import it.polimi.tiw.progetto.utils.CalcoloCosti;
-import it.polimi.tiw.progetto.utils.CookieParser;
 import it.polimi.tiw.progetto.utils.GestoreConnessione;
 import it.polimi.tiw.progetto.utils.IdException;
 import it.polimi.tiw.progetto.beans.*;
-import it.polimi.tiw.progetto.dao.FornitoreDAO;
-import it.polimi.tiw.progetto.dao.IndirizzoDAO;
 import it.polimi.tiw.progetto.dao.OrdineDAO;
-import it.polimi.tiw.progetto.dao.ProdottoDAO;
 
 @WebServlet("/VisualizzaOrdini")
 public class VisualizzaOrdini extends HttpServlet{

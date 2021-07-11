@@ -2,12 +2,10 @@ package it.polimi.tiw.progetto.controllers;
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import javax.servlet.UnavailableException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -43,23 +41,18 @@ public class ControllaLogin extends HttpServlet{
 		templateResolver.setSuffix(".html");
 	}
 	
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)  //TODO: serve o lo togliamo?
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
-		response.getWriter().append("Served at: ").append(request.getContextPath());
+		doPost(request, response);
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		String email = null;
-		String psw = null;
-		try {
-			email = request.getParameter("email");
-			psw = request.getParameter("psw");
-			if (email == null || psw == null || email.isEmpty() || psw.isEmpty()) {
-				throw new Exception("Credenziali mancanti o inesistenti");
-			}
-		} catch (Exception e) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Credenziali non presenti");
+		
+		String email = request.getParameter("email");
+		String psw = request.getParameter("psw");
+		if (email == null || psw == null || email.isEmpty() || psw.isEmpty()) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Credenziali mancanti o inesistenti");
 			return;
 		}
 		
@@ -76,7 +69,7 @@ public class ControllaLogin extends HttpServlet{
 		if (usr == null) {
 			ServletContext servletContext = getServletContext();
 			final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-			ctx.setVariable("emailInserita", (email != null || !email.isEmpty()) ? email : "email");
+			ctx.setVariable("emailInserita", (email != null || !email.isEmpty()) ? email : "");
 			ctx.setVariable("errorMsg", "Email o password errata");
 			path = "/login.html";
 			templateEngine.process(path, ctx, response.getWriter());

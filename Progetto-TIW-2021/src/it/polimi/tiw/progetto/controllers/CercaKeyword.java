@@ -4,32 +4,23 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
-import it.polimi.tiw.progetto.beans.Carrello;
 import it.polimi.tiw.progetto.beans.Prodotto;
-import it.polimi.tiw.progetto.beans.Utente;
 import it.polimi.tiw.progetto.dao.ProdottoDAO;
-import it.polimi.tiw.progetto.utils.CalcoloCosti;
-import it.polimi.tiw.progetto.utils.CookieParser;
 import it.polimi.tiw.progetto.utils.GestoreConnessione;
-import it.polimi.tiw.progetto.utils.IdException;
 
 @WebServlet("/CercaKeyword")
 public class CercaKeyword extends HttpServlet{
@@ -53,7 +44,6 @@ public class CercaKeyword extends HttpServlet{
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-
 
 		ProdottoDAO prodottoDAO = new ProdottoDAO(connection);
 		List<Prodotto> offerte = new ArrayList<Prodotto>();
