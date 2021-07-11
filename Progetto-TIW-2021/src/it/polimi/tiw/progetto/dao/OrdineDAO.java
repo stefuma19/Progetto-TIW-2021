@@ -66,7 +66,7 @@ public class OrdineDAO {
 						prodotto.setQuantita(Integer.parseInt(result.getString("Quantita")));
 						prodotti.add(prodotto);
 						
-						data = result.getDate("Data");
+						data = new Date(result.getTimestamp("Data").getTime());
 						idIndirizzo = Integer.parseInt(result.getString("IdIndirizzo"));
 					}
 					
@@ -89,7 +89,7 @@ public class OrdineDAO {
 		
 		int idOrdineNuovo = prendiProssimoId();
 		
-		String query = "INSERT INTO ordine (Id, Totale, Data, IdIndirizzo, IdUtente, IdFornitore) VALUES( ? , ? , CURDATE() , ? , ? , ? ) ";
+		String query = "INSERT INTO ordine (Id, Totale, Data, IdIndirizzo, IdUtente, IdFornitore) VALUES( ? , ? , CURRENT_TIMESTAMP() , ? , ? , ? ) ";
 		connection.setAutoCommit(false);
 		try (PreparedStatement pstatement = connection.prepareStatement(query);) {
 			
