@@ -3,10 +3,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <body>
-<table>
-<tr>
-<td th:fragment="product">
-	<table style="width:100%">
+	<table style="width:100%" th:fragment="list(product)">
 		<tr>
 		 	 <td style="padding-right: 10px;">
 		 	 	&#9679; <span th:text="${product.fornitore.nome}">Fornitore</span> - 
@@ -27,16 +24,12 @@
 				  <form action="AggiungiCarrello" method="POST" style="text-align: center;"> 
 			  			<input type="hidden" name="IdFor" th:value="${product.fornitore.ID}" required> 
 			  			<input type="hidden" name="IdProd" th:value="${product.ID}" required> 
-						<input type="number" name="quantita" id="quantita" min="1" th:max="999 - ${product.quantita}" style="width: 55px" required>
+						<input type="number" name="quantita" id="quantita" min="1" th:max="999 - ${product.quantita}" value="1" style="width: 55px" required>
 						<input type="submit" value="Inserisci">
 				  </form>
 			  </td>
 		</tr>
 	</table>
-</td>
-</tr>
-</table>
-
 </body>
 
 </html>

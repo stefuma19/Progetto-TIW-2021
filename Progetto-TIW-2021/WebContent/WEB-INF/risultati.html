@@ -22,7 +22,7 @@
 				<td>
 					<form action="CercaKeyword" method="GET">
 						&emsp;Inserisci una parola chiave per la ricerca nel catalogo: 
-						<input type="text" name="keyword" id="keyword" required>
+						<input type="text" name="keyword" id="keyword" th:value="${param.keyword}" required>
 						<input type="submit" value="Cerca">
 					</form>
 				</td>
@@ -52,7 +52,7 @@
 						</tr>
 						<tr th:if="${p.id} == ${idDaMostrare}">
 							<td colspan="2" style="padding-left: 155px;">
-								<table><tr th:each="product : ${offerte}" th:insert="@{WEB-INF/fragment.html} :: product"></tr></table>
+								<div th:each="product : ${offerte}" th:insert="@{WEB-INF/fragment.html} :: list(product)"></div>
 							</td>
 						</tr>
 					</table>
