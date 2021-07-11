@@ -35,7 +35,7 @@ public class CalcoloCosti {
 		if(!(fornitore.getSoglia() != -1 && totale > fornitore.getSoglia())) {
 			for(Range range : fornitore.getPolitica()) {
 				if((range.getMin() <= numeroProdotti && range.getMax() >= numeroProdotti) || 
-						(range.getMin() <= numeroProdotti && range.getMax() == -1)) {
+						(range.getMin() <= numeroProdotti && range.getMax() == 0)) {
 					costoSpedizione = range.getPrezzo();
 					break;
 				}
