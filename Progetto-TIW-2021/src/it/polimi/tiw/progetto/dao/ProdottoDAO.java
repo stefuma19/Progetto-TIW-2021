@@ -25,7 +25,7 @@ public class ProdottoDAO {
 		List<Prodotto> prodotti = new ArrayList<Prodotto>();
 		String query;
 		boolean valido = presenti!=null && !presenti.isEmpty();
-		if(valido) {
+		if(valido) {	//per controllare se ci sono prodotti da non prendere perchè già presenti
 			String valoriNotIn = "?";
 			for(int i=1;i<presenti.size();i++) {
 				valoriNotIn += ",?";
@@ -80,7 +80,6 @@ public class ProdottoDAO {
 	public List<Prodotto> prendiProdottiByKeyword(String parolaChiave) throws SQLException{
 		List<Prodotto> prodotti = new ArrayList<Prodotto>();
 		String parametro = "%"+parolaChiave+"%";
-		//TODO: query da cambiare? 
 		String query = "select * from prodotto p join vendita v1 on p.Id=v1.IdProdotto "
 				+ "where (Nome LIKE ? or Descrizione LIKE ?) and Prezzo =	(select min(Prezzo) from vendita v2	where v2.IdProdotto = v1.IdProdotto) "
 				+ "order by Prezzo"; 

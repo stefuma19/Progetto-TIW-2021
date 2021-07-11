@@ -20,8 +20,7 @@ public class FornitoreDAO {
 	}
 	
 	public Fornitore prendiFornitoreById(int id) throws SQLException, IdException{
-		//TODO: query da cambiare? 
-		String query = "select * from fornitore f join politica po on po.Id=f.IdPoliticaForn "  //TODO: da testare
+		String query = "select * from fornitore f join politica po on po.Id=f.IdPoliticaForn "
 				+ "where f.Id= ? "; 
 		Fornitore fornitore = new Fornitore();
 		try (PreparedStatement pstatement = connection.prepareStatement(query);) {

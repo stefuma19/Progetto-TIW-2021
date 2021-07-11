@@ -26,10 +26,10 @@ public class OrdineDAO {
 	
 	
 	public List<Ordine> prendiOrdiniByIdUtente(int IdUtente) throws SQLException, IdException{  
-		//TODO: testare
 		List<Ordine> ordini = new ArrayList<Ordine>();
 		List<Integer> idOrdini = new ArrayList<Integer>();
-		//prendo lista di id dei miei ordini e poi per ogni id prendo info prodotti ecc
+		
+		//prendo lista di id degli ordini dell'utente e poi per ogni id prendo info prodotti ecc
 		String query = "select Id from ordine ord where ord.IdUtente = ?  order by Data desc"; 
 		
 		try (PreparedStatement pstatement = connection.prepareStatement(query);) {
@@ -46,8 +46,8 @@ public class OrdineDAO {
 		IndirizzoDAO indirizzoDAO = new IndirizzoDAO(connection);
 		
 		Date data = new Date();
-		int IdFornitore = -1;
-		int IdIndirizzo = -1;
+		int idFornitore = -1;
+		int idIndirizzo = -1;
 		
 		for(Integer idOrdine : idOrdini) {
 
@@ -61,19 +61,18 @@ public class OrdineDAO {
 						throw new IdException();
 					List<Prodotto> prodotti = new ArrayList<>();
 					while (result.next()) {
-						Prodotto prodotto = prodottoDAO.prendiProdottoByIdProdottoFornitore(Integer.parseInt(result.getString("IdProdotto")), 
-								Integer.parseInt(result.getString("IdFornitore")));
+						idFornitore = Integer.parseInt(result.getString("IdFornitore"));
+						Prodotto prodotto = prodottoDAO.prendiProdottoByIdProdottoFornitore(Integer.parseInt(result.getString("IdProdotto")), idFornitore);
 						prodotto.setQuantita(Integer.parseInt(result.getString("Quantita")));
 						prodotti.add(prodotto);
 						
 						data = result.getDate("Data");
-						IdFornitore = Integer.parseInt(result.getString("IdFornitore"));
-						IdIndirizzo = Integer.parseInt(result.getString("IdIndirizzo"));
+						idIndirizzo = Integer.parseInt(result.getString("IdIndirizzo"));
 					}
 					
 					ordine.setData(data);
-					ordine.setFornitore(fornitoreDAO.prendiFornitoreById(IdFornitore));
-					ordine.setIndirizzo(indirizzoDAO.prendiIndirizzoById(IdIndirizzo));
+					ordine.setFornitore(fornitoreDAO.prendiFornitoreById(idFornitore));
+					ordine.setIndirizzo(indirizzoDAO.prendiIndirizzoById(idIndirizzo));
 					ordine.setId(idOrdine);
 					ordine.setProdotti(prodotti);
 					ordine.setTotale(CalcoloCosti.calcolaTotale(prodotti, ordine.getFornitore()));
@@ -91,10 +90,9 @@ public class OrdineDAO {
 		int idOrdineNuovo = prendiProssimoId();
 		
 		String query = "INSERT INTO ordine (Id, Totale, Data, IdIndirizzo, IdUtente, IdFornitore) VALUES( ? , ? , CURDATE() , ? , ? , ? ) ";
-		
+		connection.setAutoCommit(false);
 		try (PreparedStatement pstatement = connection.prepareStatement(query);) {
 			
-
 			pstatement.setInt(1, idOrdineNuovo);
 			pstatement.setFloat(2, totale);
 			pstatement.setInt(3, idIndirizzo);
@@ -111,6 +109,12 @@ public class OrdineDAO {
 					pstatement2.executeUpdate();
 				}
 			}
+			connection.commit();
+		} catch (SQLException e) {
+			connection.rollback();
+			throw e;
+		} finally {
+			connection.setAutoCommit(true);
 		}
 	}
 	

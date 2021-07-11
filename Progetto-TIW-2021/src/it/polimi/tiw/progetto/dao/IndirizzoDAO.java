@@ -66,7 +66,7 @@ public class IndirizzoDAO {
 	public void aggiungiIndirizzo(String citta, String via, String cap, int numero) throws SQLException{
 		String query = "INSERT INTO indirizzo (Citta, Via, Cap, Numero) VALUES( ? , ? , ? , ? )";
 		
-			try (PreparedStatement pstatement = connection.prepareStatement(query);) {
+		try (PreparedStatement pstatement = connection.prepareStatement(query);) {
 			pstatement.setString(1, citta);
 			pstatement.setString(2, via);
 			pstatement.setString(3, cap);
