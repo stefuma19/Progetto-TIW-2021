@@ -10,7 +10,7 @@
 				<span th:text="${product.fornitore.valutazione}"> Valutazione</span> &#9733; - 
 				<span th:text="${#numbers.formatDecimal(product.prezzo, 0, 'COMMA', 2, 'POINT')}">Prezzo</span> &euro;<br><br>
 				<p th:each="fascia : ${product.fornitore.politica}"> # minimo prodotti: <span th:text="${fascia.Min}"></span> 
-				 # massimo prodotti: <span th:text="${fascia.Max}"></span> - 
+				 # massimo prodotti: <span th:text="${fascia.Max} &gt; 0 ? ${fascia.Max} : 'x'"></span> -
 				 Spedizione: <span th:text="${#numbers.formatDecimal(fascia.Prezzo, 0, 'COMMA', 2, 'POINT')}"></span> &euro;</p>
 			  </td>
 			  <td valign="top" th:switch="${product.fornitore.soglia}">
