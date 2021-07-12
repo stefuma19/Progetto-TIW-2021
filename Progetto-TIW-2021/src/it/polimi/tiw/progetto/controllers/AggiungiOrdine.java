@@ -61,6 +61,15 @@ public class AggiungiOrdine extends HttpServlet{
 		
 		if(request.getParameter("idForn") != null) {  //se devo inserire un nuovo ordine
 			try {
+				Integer.parseInt(request.getParameter("idForn"));
+				
+			} catch (NumberFormatException e) {
+				response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Richiesta mal formata");
+				return;
+		    }
+
+			
+			try {
 				if(!fornitoreDAO.esisteFornitore(Integer.parseInt(request.getParameter("idForn")))) {
 					response.sendError(HttpServletResponse.SC_BAD_REQUEST, "L'ID a cui si sta tentando di accedere non esiste");
 					return;
@@ -75,6 +84,16 @@ public class AggiungiOrdine extends HttpServlet{
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
+			
+			try {
+				Integer.parseInt(request.getParameter("cap"));
+				Integer.parseInt(request.getParameter("numero"));
+			} catch (NumberFormatException e) {
+				response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Richiesta mal formata");
+				return;
+		    }
+
+			
 			int idFor = Integer.parseInt(request.getParameter("idForn"));
 			int idUtente = (((Utente)s.getAttribute("utente")).getId());
 			List<Prodotto> prodottiUtente = new ArrayList<Prodotto>();

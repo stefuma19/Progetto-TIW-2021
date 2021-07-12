@@ -64,6 +64,15 @@ public class CercaOfferte extends HttpServlet{
 		List<Prodotto> listaProdotti = (List<Prodotto>)request.getSession().getAttribute("listaProdotti");
 		
 		if(request.getParameter("idProdotto") != null) {
+			
+			try {
+				Integer.parseInt(request.getParameter("idProdotto"));
+			} catch (NumberFormatException e) {
+				response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Richiesta mal formata");
+				return;
+		    }
+
+			
 			boolean presente = false;
 			if(listaProdotti != null) {
 				for(Prodotto p : listaProdotti) {
