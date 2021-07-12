@@ -14,12 +14,12 @@
 				 Spedizione: <span th:text="${#numbers.formatDecimal(fascia.Prezzo, 0, 'COMMA', 2, 'POINT')}"></span> &euro;</p>
 			  </td>
 			  <td valign="top" th:switch="${product.fornitore.soglia}">
-				  <span th:case="-1">La soglia per la spedizione gratis non Ë presente</span>
-				  <span th:case="*">La soglia per la spedizione gratis Ë di: 
+				  <span th:case="-1">La soglia per la spedizione gratis non √® presente</span>
+				  <span th:case="*">La soglia per la spedizione gratis √® di: 
 				  <span th:text="${#numbers.formatDecimal(product.fornitore.soglia, 0, 'COMMA', 2, 'POINT')}">Soglia</span> &euro;</span> 
 				  <br><br>
-				  Numero di prodotti gi‡ nel carrello: <span th:text="${product.quantita}"></span><br>
-				  Valore dei prodotti gi‡ nel carrello: 
+				  Numero di prodotti gi√† nel carrello: <span th:text="${product.quantita}"></span><br>
+				  Valore dei prodotti gi√† nel carrello: 
 				  <span th:text="${product.valore} &gt; 0 ? ${#numbers.formatDecimal(product.valore, 0, 'COMMA', 2, 'POINT')} : '0.00'"></span> &euro;<br><br><br>
 				  <form action="AggiungiCarrello" method="POST" style="text-align: center;"> 
 			  			<input type="hidden" name="IdFor" th:value="${product.fornitore.ID}" required> 

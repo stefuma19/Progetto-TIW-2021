@@ -55,13 +55,13 @@ public class VisualizzaHome extends HttpServlet{
 		List<Prodotto> prodotti = new ArrayList<Prodotto>();
 		HttpSession session = request.getSession();
 		
-		if(session.getAttribute("listaVisualizzati") != null) {  //se ho dei prodotti gi‡ "visualizzati"
+		if(session.getAttribute("listaVisualizzati") != null) {  //se ho dei prodotti gi√† "visualizzati"
 			listaVisualizzati = (Queue<Integer>) session.getAttribute("listaVisualizzati");
 			for(Integer id : listaVisualizzati)
 				try {
 					prodotti.add(prodottoDAO.prendiProdottoById(id));
 				}catch (SQLException e) {
-					response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile recuperare prodotti gi‡ visualizzati");
+					response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Impossibile recuperare prodotti gi√† visualizzati");
 					return;
 				}catch (IdException e) {
 					response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());

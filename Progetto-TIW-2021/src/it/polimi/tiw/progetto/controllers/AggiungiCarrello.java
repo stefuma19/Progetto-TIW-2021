@@ -76,7 +76,7 @@ public class AggiungiCarrello extends HttpServlet{
 			}
 			
 			if(request.getParameter("quantita")==null || request.getParameter("quantita")=="") {
-						response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Campo quantit‡ assente");
+						response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Campo quantit√† assente");
 						return;
 			}
 			
@@ -84,10 +84,10 @@ public class AggiungiCarrello extends HttpServlet{
 			Cookie[] cookies = request.getCookies();
 			HttpSession s = request.getSession(); 
 			if(Integer.parseInt(request.getParameter("quantita")) < 1){
-				response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Quantit‡ selezionata minore o uguale a 0");
+				response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Quantit√† selezionata minore o uguale a 0");
 				return;
 			}else if (Integer.parseInt(request.getParameter("quantita")) > 999) {
-				response.sendError(HttpServletResponse.SC_BAD_REQUEST, "La quantit‡ di prodotti nel carrello non puÚ superare le 999 unit‡");
+				response.sendError(HttpServletResponse.SC_BAD_REQUEST, "La quantit√† di prodotti nel carrello non pu√≤ superare le 999 unit√†");
 				return;
 			}else if (cookies != null) {
 				for (int i = 0; i < cookies.length; i++) {
@@ -98,9 +98,9 @@ public class AggiungiCarrello extends HttpServlet{
 						String valore = c.getValue(); 
 						List<Prodotto> prodottiPresenti = CookieParser.parseCookie(c); 
 						if(CalcoloCosti.calcolaNumeroProdotti(prodottiPresenti) + Integer.parseInt(request.getParameter("quantita")) > 999) {
-							response.sendError(HttpServletResponse.SC_BAD_REQUEST, "La quantit‡ di prodotti nel carrello non puÚ superare le 999 unit‡");
+							response.sendError(HttpServletResponse.SC_BAD_REQUEST, "La quantit√† di prodotti nel carrello non pu√≤ superare le 999 unit√†");
 							return;
-						}else { //controllo se ho gi‡ aggiunto quel prodotto e ne aumento solo la quantit‡
+						}else { //controllo se ho gi√† aggiunto quel prodotto e ne aumento solo la quantit√†
 							boolean presente = false;
 							for(Prodotto p: prodottiPresenti) {
 								if(p.getID() == Integer.parseInt(request.getParameter("IdProd"))) {
