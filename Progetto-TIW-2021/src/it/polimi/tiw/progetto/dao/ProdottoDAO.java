@@ -25,7 +25,7 @@ public class ProdottoDAO {
 		List<Prodotto> prodotti = new ArrayList<Prodotto>();
 		String query;
 		boolean valido = presenti!=null && !presenti.isEmpty();
-		if(valido) {	//per controllare se ci sono prodotti da non prendere perchË gi‡ presenti
+		if(valido) {	//per controllare se ci sono prodotti da non prendere perch√† gi√† presenti
 			String valoriNotIn = "?";
 			for(int i=1;i<presenti.size();i++) {
 				valoriNotIn += ",?";
