@@ -53,7 +53,14 @@ public class AggiungiCarrello extends HttpServlet{
 		FornitoreDAO fornitoreDAO = new FornitoreDAO(connection);
 		
 		if(request.getParameter("IdFor") != null && request.getParameter("IdProd") != null) {
-			
+			try {
+				Integer.parseInt(request.getParameter("IdProd"));
+				Integer.parseInt(request.getParameter("IdFor"));
+				Integer.parseInt(request.getParameter("quantita"));
+			} catch (NumberFormatException e) {
+				response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Richiesta mal formata");
+				return;
+		    }
 			try {
 				if(!prodottoDAO.esisteProdotto(Integer.parseInt(request.getParameter("IdProd"))) || 
 						!fornitoreDAO.esisteFornitore(Integer.parseInt(request.getParameter("IdFor")))) {

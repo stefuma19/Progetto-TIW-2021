@@ -61,7 +61,14 @@ public class CercaProdotto extends HttpServlet{
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
 		
 		if(request.getParameter("idProdotto") != null) {
-
+			
+			try {
+				Integer.parseInt(request.getParameter("idProdotto"));
+			} catch (NumberFormatException e) {
+				response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Richiesta mal formata");
+				return;
+		    }
+			
 			int idProdotto = Integer.parseInt(request.getParameter("idProdotto"));
 			List<Prodotto> listaProdotti = new ArrayList<>();
 			try {

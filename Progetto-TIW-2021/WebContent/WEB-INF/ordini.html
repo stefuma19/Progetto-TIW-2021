@@ -49,9 +49,11 @@
 							</td>
 						</tr>
 						<tr><td><br>Lista dei prodotti acquistati:</td></tr>
-						<tr th:each="p : ${o.prodotti}">
+						<tr>
 							<td>	
-								&#9679; <span th:text="${p.nome}">Nome</span>&emsp;x <span th:text="${p.quantita}">Quantità</span>   
+								<ul th:each="p : ${o.prodotti}">
+									<li> <span th:text="${p.nome}">Nome</span>&emsp;x <span th:text="${p.quantita}">Quantità</span>   
+								</ul>
 							</td>
 						</tr>
 					</table>
