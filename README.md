@@ -7,4 +7,4 @@ La documentazione è contenuta nel file <i>Relazione.pdf</i>
  ## Membri del gruppo
 * [Lara Ferro](https://github.com/aralara) | lara.ferro@mail.polimi.it 
 * [Stefano Fumagalli](https://github.com/stefuma19) | stefano14.fumagalli@mail.polimi.it
-* [Davide Rigamonti](https://github.com/davide-rigamonti-polimi) | davide2.rigamonti@mail.polimi.it
+* [Davide Rigamonti](https://github.com/daviderigamonti) | davide2.rigamonti@mail.polimi.it
